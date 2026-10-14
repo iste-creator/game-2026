@@ -20,15 +20,20 @@ module.exports = (req, res) => {
   else if (urlPath === "/teamA" || urlPath === "/teamA/") urlPath = "/teamA/index.html";
   else if (urlPath === "/teamB" || urlPath === "/teamB/") urlPath = "/teamB/index.html";
 
-  const filePath = path.join(process.cwd(), urlPath);
+  // In Vercel serverless, root files are in path.join(__dirname, "..")
+  let filePath = path.join(__dirname, "..", urlPath);
+  if (!fs.existsSync(filePath)) {
+    filePath = path.join(process.cwd(), urlPath);
+  }
+
   const ext = path.extname(filePath).toLowerCase();
-  const contentType = mimeTypes[ext] || "application/octet-stream";
+  const contentType = mimeTypes[ext] || "text/plain";
 
   fs.readFile(filePath, (err, content) => {
     if (err) {
       res.statusCode = 404;
       res.setHeader("Content-Type", "text/plain");
-      res.end("404 Not Found");
+      res.end("404 Not Found: " + urlPath);
     } else {
       res.statusCode = 200;
       res.setHeader("Content-Type", contentType);
