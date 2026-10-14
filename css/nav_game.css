@@ -1,0 +1,814 @@
+/* ========================================================
+   AUTONOMOUS NAVIGATION MINI-GAME (QUEST 03) STYLES
+   Industrial Motorsport Control-Room Aesthetic
+   ======================================================== */
+
+.nav-game-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 6, 12, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 2000;
+  overflow-y: auto;
+  padding: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.nav-game-overlay.active {
+  display: flex;
+}
+
+.nav-game-window {
+  background: #080c14;
+  border: 2px solid var(--team-accent, #00d2ff);
+  box-shadow: 0 0 60px rgba(0, 0, 0, 0.95), 0 0 35px var(--team-glow, rgba(0, 210, 255, 0.35));
+  border-radius: 8px;
+  max-width: 960px;
+  width: 100%;
+  max-height: 94vh;
+  position: relative;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Nav Window Top Bar */
+.nav-topbar {
+  background: #05080e;
+  border-bottom: 2px solid var(--border-metal, #222d3d);
+  padding: 0.7rem 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.nav-header-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--team-accent, #00d2ff);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.game-close-btn {
+  background: transparent;
+  border: 1px solid var(--border-metal, #222d3d);
+  color: #94a3b8;
+  width: 30px;
+  height: 30px;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+  transition: all 0.2s;
+}
+
+.game-close-btn:hover {
+  border-color: #ef4444;
+  color: #fff;
+  background: rgba(239, 68, 68, 0.15);
+}
+
+/* Content Layout */
+.nav-content-area {
+  padding: 1rem 1.6rem 1.4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.nav-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.nav-quest-heading {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  color: var(--hazard-yellow, #f59e0b);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 0.15rem;
+}
+
+.nav-main-title {
+  font-family: var(--font-race, sans-serif);
+  font-size: clamp(1.8rem, 3.2vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #fff;
+  text-transform: uppercase;
+  line-height: 0.95;
+  margin: 0;
+}
+
+/* Mission Briefing Banner */
+.nav-mission-banner {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid var(--border-metal, #222d3d);
+  border-left: 3px solid var(--team-accent, #00d2ff);
+  padding: 0.45rem 0.9rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8rem;
+  color: #e2e8f0;
+  letter-spacing: 0.04em;
+}
+
+.nav-mission-banner strong {
+  color: var(--team-accent, #00d2ff);
+}
+
+/* Telemetry Status Strip */
+.nav-telemetry-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #090e16;
+  border: 1px solid var(--border-metal, #222d3d);
+  padding: 0.5rem 1.1rem;
+  border-radius: 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.78rem;
+}
+
+.nav-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.22rem 0.65rem;
+  border-radius: 3px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  font-size: 0.72rem;
+}
+
+.nav-status-badge.ready {
+  background: rgba(6, 182, 212, 0.14);
+  border: 1px solid var(--team-accent, #00d2ff);
+  color: var(--team-accent, #00d2ff);
+}
+
+.nav-status-badge.moving {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid #f59e0b;
+  color: #f59e0b;
+  animation: pulseMoving 0.8s infinite;
+}
+
+.nav-status-badge.blocked {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid #ef4444;
+  color: #ef4444;
+}
+
+.nav-status-badge.arrived {
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid #10b981;
+  color: #10b981;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+}
+
+@keyframes pulseMoving {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Two-Column Arena Layout */
+.nav-arena-grid {
+  display: grid;
+  grid-template-columns: 420px 1fr;
+  gap: 1.4rem;
+  align-items: start;
+}
+
+/* 5x5 Maze Grid Container */
+.maze-grid-wrapper {
+  background: #070b12;
+  border: 2px solid var(--border-metal, #222d3d);
+  border-radius: 8px;
+  padding: 0.85rem;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.85);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.maze-5x5-board {
+  display: grid;
+  grid-template-columns: repeat(5, 72px);
+  grid-template-rows: repeat(5, 72px);
+  gap: 8px;
+  position: relative;
+  background: #04070c;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #16202e;
+}
+
+.maze-tile {
+  background: #0d1420;
+  border: 1px solid #1c2738;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: border-color 0.25s, box-shadow 0.25s, background 0.25s, transform 0.15s;
+  user-select: none;
+  cursor: pointer;
+}
+
+.maze-tile:hover:not(.obstacle) {
+  border-color: rgba(0, 210, 255, 0.4);
+  background: #111a28;
+  transform: scale(1.02);
+}
+
+/* Subtle glow to the robot's current tile */
+.maze-tile.robot-present {
+  border-color: var(--team-accent, #00d2ff);
+  background: radial-gradient(circle at center, rgba(0, 210, 255, 0.16) 0%, #0d1420 70%);
+  box-shadow: 0 0 18px var(--team-glow, rgba(0, 210, 255, 0.35)), inset 0 0 12px var(--team-glow, rgba(0, 210, 255, 0.2));
+}
+
+/* Restrained red warning animation on hazards */
+.maze-tile.obstacle {
+  background: repeating-linear-gradient(
+    -45deg,
+    #140a0e,
+    #140a0e 10px,
+    #2a0d14 10px,
+    #2a0d14 20px
+  );
+  border: 1px solid rgba(239, 68, 68, 0.65);
+  animation: hazardRestrainedPulse 3s ease-in-out infinite;
+  cursor: not-allowed;
+}
+
+.maze-tile.obstacle:hover {
+  border-color: #ef4444;
+  box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);
+}
+
+.maze-tile.projected-hazard {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 20px #ef4444, inset 0 0 15px rgba(239, 68, 68, 0.6) !important;
+  animation: collisionWarningPulse 0.6s ease-in-out infinite alternate !important;
+}
+
+@keyframes collisionWarningPulse {
+  from { transform: scale(1); filter: brightness(1); }
+  to { transform: scale(1.04); filter: brightness(1.35); }
+}
+
+/* Projected Route Path Marker */
+.projected-marker {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 32px;
+  height: 32px;
+  background: rgba(14, 28, 44, 0.92);
+  border: 1.5px solid var(--team-accent, #00d2ff);
+  box-shadow: 0 0 12px var(--team-glow, rgba(0, 210, 255, 0.5));
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 5;
+  animation: popIn 0.2s cubic-bezier(0.18, 0.9, 0.3, 1);
+}
+
+.projected-marker .proj-step-num {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: var(--team-accent, #00d2ff);
+  line-height: 1;
+}
+
+.projected-marker .proj-arrow {
+  font-size: 0.72rem;
+  color: #fff;
+  line-height: 1;
+}
+
+.projected-marker.collision {
+  border-color: #ef4444;
+  background: rgba(45, 10, 16, 0.95);
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.8);
+  animation: pulseCrashMarker 0.7s infinite alternate;
+}
+
+.projected-marker.collision .proj-step-num,
+.projected-marker.collision .proj-arrow {
+  color: #ef4444;
+}
+
+@keyframes pulseCrashMarker {
+  from { transform: translate(-50%, -50%) scale(1); }
+  to { transform: translate(-50%, -50%) scale(1.15); }
+}
+
+@keyframes hazardRestrainedPulse {
+  0%, 100% {
+    border-color: rgba(239, 68, 68, 0.45);
+    box-shadow: inset 0 0 8px rgba(239, 68, 68, 0.2);
+  }
+  50% {
+    border-color: rgba(239, 68, 68, 0.95);
+    box-shadow: inset 0 0 16px rgba(239, 68, 68, 0.35), 0 0 10px rgba(239, 68, 68, 0.2);
+  }
+}
+
+/* Highlight finish tile in green */
+.maze-tile.destination {
+  background: radial-gradient(circle at center, rgba(16, 185, 129, 0.22) 0%, #071512 70%);
+  border: 2px solid #10b981;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.45), inset 0 0 14px rgba(16, 185, 129, 0.25);
+  animation: finishPulse 2s ease-in-out infinite;
+}
+
+.maze-tile.destination::after {
+  content: '';
+}
+
+.dest-beacon-ring {
+  position: absolute;
+  inset: -4px;
+  border: 1px dashed rgba(16, 185, 129, 0.5);
+  border-radius: 8px;
+  animation: rotateRing 8s linear infinite;
+}
+
+@keyframes rotateRing {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.dest-flag {
+  font-size: 1.4rem;
+  z-index: 2;
+  filter: drop-shadow(0 0 8px #10b981);
+}
+
+@keyframes finishPulse {
+  0%, 100% {
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.35), inset 0 0 8px rgba(16, 185, 129, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 26px rgba(16, 185, 129, 0.75), inset 0 0 16px rgba(16, 185, 129, 0.35);
+  }
+}
+
+/* Smooth-Gliding Robot Token */
+.robot-glider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 54px;
+  height: 54px;
+  background: #090e17;
+  border: 2px solid var(--team-accent, #00d2ff);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 20px var(--team-glow, rgba(0, 210, 255, 0.6)), inset 0 0 8px rgba(0, 210, 255, 0.3);
+  transition: transform 0.34s cubic-bezier(0.2, 0.9, 0.3, 1);
+  z-index: 10;
+  pointer-events: none;
+}
+
+.robot-visor {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.76rem;
+  font-weight: 900;
+  color: var(--team-accent, #00d2ff);
+  text-shadow: 0 0 8px var(--team-glow, rgba(0, 210, 255, 0.8));
+  letter-spacing: -0.05em;
+}
+
+.robot-visor.move {
+  color: #f59e0b;
+  text-shadow: 0 0 10px #f59e0b;
+}
+
+.robot-visor.crash {
+  color: #ef4444;
+  text-shadow: 0 0 12px #ef4444;
+}
+
+.robot-visor.win {
+  color: #10b981;
+  text-shadow: 0 0 12px #10b981;
+}
+
+.robot-glider.crashed {
+  border-color: #ef4444;
+  box-shadow: 0 0 25px #ef4444, inset 0 0 10px #ef4444;
+  animation: shakeCrash 0.4s ease;
+}
+
+.robot-glider.victory {
+  border-color: #10b981;
+  box-shadow: 0 0 35px #10b981, inset 0 0 15px #10b981;
+  animation: victorySpin 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes stepPop {
+  0% { transform: scale(0.88); }
+  50% { transform: scale(1.14); }
+  100% { transform: scale(1); }
+}
+
+@keyframes victorySpin {
+  0% { transform: scale(1) rotate(0deg); }
+  50% { transform: scale(1.3) rotate(180deg); }
+  100% { transform: scale(1.1) rotate(360deg); }
+}
+
+@keyframes shakeCrash {
+  0%, 100% { margin-left: 0; }
+  20%, 60% { margin-left: -6px; }
+  40%, 80% { margin-left: 6px; }
+}
+
+/* Legend under maze */
+.maze-legend-row {
+  margin-top: 0.65rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  color: #64748b;
+  display: flex;
+  gap: 1.25rem;
+}
+
+/* Right Column: Sequence & Directional D-Pad Controls */
+.nav-controls-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+/* Movement Sequence Display */
+.sequence-panel-box {
+  background: #0a0f18;
+  border: 1px solid var(--border-metal, #222d3d);
+  border-radius: 6px;
+  padding: 0.85rem 1rem;
+}
+
+.seq-panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.55rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  color: #94a3b8;
+  letter-spacing: 0.12em;
+}
+
+.sequence-tags-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  min-height: 48px;
+  align-items: center;
+  background: #05080e;
+  border: 1px solid #16202e;
+  padding: 0.5rem 0.7rem;
+  border-radius: 4px;
+}
+
+.seq-chip {
+  background: #111a26;
+  border: 1px solid var(--team-accent, #00d2ff);
+  color: #fff;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.24rem 0.55rem;
+  border-radius: 3px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  transition: all 0.2s;
+}
+
+.seq-chip .seq-arrow {
+  color: var(--team-accent, #00d2ff);
+  font-size: 0.85rem;
+}
+
+.seq-chip.active-step {
+  background: var(--team-accent, #00d2ff);
+  color: #000;
+  box-shadow: 0 0 14px var(--team-glow, rgba(0, 210, 255, 0.7));
+  transform: scale(1.08);
+}
+
+.seq-chip.active-step .seq-arrow {
+  color: #000;
+}
+
+.empty-seq-placeholder {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.74rem;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+/* Directional D-Pad */
+.dpad-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.45rem;
+  margin: 0.25rem 0;
+}
+
+.dpad-row {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.dpad-btn {
+  width: 64px;
+  height: 52px;
+  background: #101724;
+  border: 1px solid var(--border-metal, #222d3d);
+  color: #f1f5f9;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display, sans-serif);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  transition: all 0.18s;
+  user-select: none;
+}
+
+.dpad-btn .arrow-icon {
+  font-size: 1.15rem;
+  line-height: 1;
+  color: var(--team-accent, #00d2ff);
+  margin-bottom: 2px;
+}
+
+.dpad-btn:hover:not(:disabled) {
+  background: var(--team-accent, #00d2ff);
+  color: #000;
+  border-color: var(--team-accent, #00d2ff);
+  box-shadow: 0 0 18px var(--team-glow, rgba(0, 210, 255, 0.5));
+  transform: translateY(-2px);
+}
+
+.dpad-btn:hover:not(:disabled) .arrow-icon {
+  color: #000;
+}
+
+.dpad-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.dpad-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Action Execution Buttons Row */
+.nav-actions-row {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.btn-run-robot {
+  background: var(--team-accent, #00d2ff);
+  color: #000;
+  border: 1px solid var(--team-accent, #00d2ff);
+  box-shadow: 0 0 20px var(--team-glow, rgba(0, 210, 255, 0.45));
+  font-family: var(--font-display, sans-serif);
+  font-weight: 900;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  padding: 0.75rem 0.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.btn-run-robot:hover:not(:disabled) {
+  filter: brightness(1.15);
+  box-shadow: 0 0 25px var(--team-glow, rgba(0, 210, 255, 0.7));
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: #101622;
+  border: 1px solid var(--border-metal, #222d3d);
+  color: #cbd5e1;
+  font-family: var(--font-display, sans-serif);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.75rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #1a2332;
+  border-color: #3b4d66;
+  color: #fff;
+}
+
+.btn-run-robot:disabled,
+.btn-secondary:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Alert Notification Banner */
+.nav-alert-banner {
+  display: none;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid #ef4444;
+  color: #fca5a5;
+  padding: 0.65rem 0.9rem;
+  border-radius: 4px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.82rem;
+  text-align: center;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+}
+
+.nav-alert-banner.active {
+  display: block;
+  animation: shakeCrash 0.4s ease;
+}
+
+/* Success Overlay Card */
+.nav-success-box {
+  display: none;
+  background: rgba(8, 18, 14, 0.95);
+  border: 2px solid #10b981;
+  box-shadow: 0 0 45px rgba(16, 185, 129, 0.4);
+  border-radius: 6px;
+  padding: 1.25rem;
+  text-align: center;
+  animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.nav-success-box.active {
+  display: block;
+}
+
+.success-stamp-badge {
+  display: inline-block;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  color: #10b981;
+  border: 1px solid #10b981;
+  padding: 0.2rem 0.65rem;
+  border-radius: 3px;
+  letter-spacing: 0.15em;
+  margin-bottom: 0.5rem;
+}
+
+.success-mission-title {
+  font-family: var(--font-display, sans-serif);
+  font-size: 1.65rem;
+  font-weight: 900;
+  color: #10b981;
+  letter-spacing: 0.08em;
+  margin: 0.2rem 0 0.3rem;
+  text-transform: uppercase;
+}
+
+.success-subline {
+  font-family: var(--font-body, sans-serif);
+  font-size: 1.05rem;
+  color: #cbd5e1;
+  margin: 0 0 0.85rem;
+}
+
+.auth-code-card {
+  background: #040907;
+  border: 1px solid #10b981;
+  padding: 0.6rem 1rem;
+  border-radius: 4px;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  margin-bottom: 0.9rem;
+}
+
+.auth-code-lbl {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.7rem;
+  color: #94a3b8;
+  letter-spacing: 0.1em;
+}
+
+.auth-code-val {
+  font-family: var(--font-mono, monospace);
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.25em;
+  text-shadow: 0 0 15px rgba(16, 185, 129, 0.7);
+}
+
+.btn-exec {
+  width: 100%;
+  background: #10b981;
+  color: #000;
+  border: 1px solid #10b981;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.45);
+  font-family: var(--font-display, sans-serif);
+  font-weight: 900;
+  font-size: 1rem;
+  letter-spacing: 0.12em;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+
+.btn-exec:hover {
+  filter: brightness(1.15);
+  transform: translateY(-2px);
+  box-shadow: 0 0 28px rgba(16, 185, 129, 0.65);
+}
+
+.exec-instruction-box {
+  display: none;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px dashed #10b981;
+  color: #6ee7b7;
+  padding: 0.75rem 1rem;
+  border-radius: 4px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.84rem;
+  margin-top: 0.85rem;
+  line-height: 1.4;
+}
+
+.exec-instruction-box.active {
+  display: block;
+}
+
+@keyframes popIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@media (max-width: 860px) {
+  .nav-arena-grid {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  .maze-grid-wrapper {
+    width: 100%;
+  }
+}

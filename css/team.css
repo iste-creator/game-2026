@@ -1,0 +1,301 @@
+/* Team Page Styling - Industrial Automotive Vault Theme */
+
+.theme-team-a {
+  --team-accent: var(--accent-teamA, #00d2ff);
+  --team-glow: rgba(0, 210, 255, 0.4);
+}
+
+.theme-team-b {
+  --team-accent: var(--accent-teamB, #ff5500);
+  --team-glow: rgba(255, 85, 0, 0.4);
+}
+
+/* Team Top Navigation Bar */
+.team-nav-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.75rem;
+  background: #0d1218;
+  border: 1px solid var(--border-metal);
+  margin-bottom: 2rem;
+  border-radius: 4px;
+}
+
+.team-nav-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  letter-spacing: 0.1em;
+  padding: 0.4rem 0.9rem;
+  background: #141b24;
+  border: 1px solid var(--border-metal);
+  border-radius: 3px;
+  transition: all 0.2s;
+}
+
+.team-nav-back:hover {
+  color: #fff;
+  border-color: var(--team-accent);
+  background: #1a2330;
+}
+
+/* Team Banner */
+.team-dossier-header {
+  margin-bottom: 1.25rem;
+  border-left: 4px solid var(--team-accent);
+  padding-left: 1.2rem;
+}
+
+.team-dept-tag {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--team-accent);
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  margin-bottom: 0.25rem;
+  display: block;
+}
+
+.team-main-heading {
+  font-family: var(--font-race);
+  font-size: clamp(2.4rem, 4.8vw, 3.6rem);
+  font-weight: 700;
+  line-height: 0.92;
+  letter-spacing: 0.04em;
+  color: #fff;
+  text-transform: uppercase;
+  margin-bottom: 0.45rem;
+}
+
+.team-main-heading span {
+  color: var(--team-accent);
+}
+
+.team-lead-desc {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: #94a3b8;
+  max-width: 820px;
+  line-height: 1.4;
+}
+
+/* 4 Vaults Grid */
+.vaults-assembly-section {
+  margin-bottom: 1.5rem;
+}
+
+.assembly-section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.85rem;
+  border-bottom: 1px solid var(--border-metal);
+  padding-bottom: 0.35rem;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  letter-spacing: 0.12em;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.vault-progress-pill {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--team-accent);
+}
+
+.vaults-grid-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1.1rem;
+}
+
+.vault-card-box {
+  background: #0f141c;
+  border: 1px solid var(--border-metal);
+  padding: 1.15rem 1.1rem;
+  border-radius: 4px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.25s;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+}
+
+.vault-card-box::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: var(--border-metal);
+  transition: background 0.25s;
+}
+
+.vault-card-box:hover {
+  transform: translateY(-5px);
+  border-color: var(--team-accent);
+}
+
+.vault-card-box:hover::before {
+  background: var(--team-accent);
+}
+
+.vault-card-box.decrypted {
+  border-color: #10b981;
+}
+
+.vault-card-box.decrypted::before {
+  background: #10b981;
+}
+
+.vault-subsystem-id {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  letter-spacing: 0.2em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.vault-status-indicator {
+  padding: 0.2rem 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  border: 1px solid var(--hazard-yellow);
+  color: var(--hazard-yellow);
+  background: rgba(245, 158, 11, 0.08);
+}
+
+.vault-card-box.decrypted .vault-status-indicator {
+  border-color: #10b981;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.vault-icon-badge {
+  font-size: 1.8rem;
+  margin-bottom: 0.6rem;
+}
+
+.vault-subsystem-title {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #fff;
+  margin-bottom: 0.35rem;
+}
+
+.vault-subsystem-desc {
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  color: #94a3b8;
+  line-height: 1.4;
+  margin-bottom: 1.1rem;
+  flex-grow: 1;
+}
+
+.vault-inspect-btn {
+  width: 100%;
+  padding: 0.65rem 0.8rem;
+  background: #151d27;
+  border: 1px solid var(--border-metal);
+  color: #fff;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.92rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.vault-inspect-btn:hover {
+  background: var(--team-accent);
+  color: #000;
+  border-color: var(--team-accent);
+}
+
+/* User Instruction Staging Area */
+.user-staging-banner {
+  background: #090c10;
+  border: 2px dashed var(--border-metal);
+  padding: 2.5rem;
+  text-align: center;
+  border-radius: 4px;
+  margin-top: 2rem;
+}
+
+.user-staging-banner h3 {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  color: #fff;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+}
+
+.user-staging-banner p {
+  font-family: var(--font-body);
+  font-size: 1.1rem;
+  color: #94a3b8;
+  max-width: 650px;
+  margin: 0 auto;
+}
+
+/* Modal Popup */
+.vault-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.vault-modal-overlay.active {
+  display: flex;
+}
+
+.vault-modal-box {
+  background: #0d1218;
+  border: 2px solid var(--team-accent);
+  border-radius: 6px;
+  max-width: 580px;
+  width: 100%;
+  padding: 2.2rem;
+  position: relative;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: transparent;
+  border: 1px solid var(--border-metal);
+  color: #94a3b8;
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.modal-close-btn:hover {
+  border-color: #ef4444;
+  color: #fff;
+}

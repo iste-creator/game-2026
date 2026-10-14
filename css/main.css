@@ -1,0 +1,550 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,600;0,800;0,900;1,800;1,900&family=Rajdhani:wght@500;600;700&family=Share+Tech+Mono&family=Teko:wght@500;600;700&display=swap');
+
+:root {
+  --bg-deep: #080a0d;
+  --bg-surface: #0e1218;
+  --bg-card: #131820;
+  --bg-steel: #1a222d;
+  
+  --hazard-yellow: #f59e0b;
+  --hazard-yellow-bright: #fbbf24;
+  --hazard-red: #ef4444;
+  --hazard-cyan: #06b6d4;
+
+  --accent-teamA: #00d2ff;
+  --accent-teamB: #ff5500;
+
+  --text-main: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-dim: #475569;
+
+  --font-race: 'Teko', 'Barlow Condensed', sans-serif;
+  --font-display: 'Barlow Condensed', sans-serif;
+  --font-body: 'Rajdhani', sans-serif;
+  --font-mono: 'Share Tech Mono', monospace;
+
+  --border-metal: #263342;
+  --border-active: #3b4d63;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  min-height: 100vh;
+  background-color: var(--bg-deep);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  position: relative;
+  /* Carbon fiber & industrial workshop grid background */
+  background-image: 
+    radial-gradient(ellipse at 50% 0%, rgba(245, 158, 11, 0.08) 0%, transparent 60%),
+    linear-gradient(45deg, rgba(255, 255, 255, 0.012) 25%, transparent 25%), 
+    linear-gradient(-45deg, rgba(255, 255, 255, 0.012) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.012) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.012) 75%);
+  background-size: 100% 100%, 16px 16px, 16px 16px, 16px 16px, 16px 16px;
+  background-position: 0 0, 0 0, 0 8px, 8px -8px, -8px 0;
+}
+
+/* Diagonal Hazard Tape Stripe Utility */
+.hazard-tape {
+  height: 6px;
+  width: 100%;
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--hazard-yellow),
+    var(--hazard-yellow) 12px,
+    #111 12px,
+    #111 24px
+  );
+  opacity: 0.9;
+}
+
+/* Facility Top Strip */
+.facility-topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 2.5rem;
+  background: #090c10;
+  border-bottom: 1px solid var(--border-metal);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  color: var(--text-secondary);
+}
+
+.topbar-classified-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--hazard-yellow);
+  font-weight: 700;
+  border: 1px solid var(--hazard-yellow);
+  padding: 0.2rem 0.6rem;
+  background: rgba(245, 158, 11, 0.08);
+  border-radius: 2px;
+}
+
+.topbar-classified-stamp .blink-led {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--hazard-yellow);
+  box-shadow: 0 0 8px var(--hazard-yellow);
+  animation: ledBlink 1.4s infinite;
+}
+
+@keyframes ledBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+
+.topbar-meta {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.topbar-btn,
+.audio-toggle-btn {
+  background: #131922;
+  border: 1px solid var(--border-metal);
+  color: var(--text-secondary);
+  padding: 0.35rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  transition: all 0.2s;
+  letter-spacing: 0.08em;
+}
+
+.topbar-btn:hover,
+.audio-toggle-btn:hover {
+  border-color: var(--hazard-yellow);
+  color: #fff;
+  background: #18202c;
+}
+
+/* Main Container */
+.dossier-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2.5rem 2rem 4rem;
+}
+
+/* Dossier Header & Title */
+.dossier-briefing {
+  text-align: center;
+  margin-bottom: 2rem;
+  position: relative;
+}
+
+.dossier-code {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--hazard-yellow);
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.dossier-title {
+  font-family: var(--font-race);
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  line-height: 0.95;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.dossier-title .sub-tag {
+  color: var(--hazard-yellow);
+}
+
+.project-nameplate {
+  display: inline-block;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  color: #fff;
+  background: #151d27;
+  border: 1px solid var(--border-metal);
+  padding: 0.4rem 1.8rem;
+  margin-bottom: 1.75rem;
+  text-transform: uppercase;
+  border-left: 4px solid var(--hazard-yellow);
+}
+
+/* Story Dossier Box */
+.story-dossier-box {
+  background: rgba(14, 18, 24, 0.92);
+  border: 1px solid var(--border-metal);
+  max-width: 860px;
+  margin: 0 auto 2.5rem;
+  padding: 2rem 2.5rem;
+  text-align: left;
+  position: relative;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+}
+
+.story-dossier-box::before {
+  content: "DEPT. OF EXPERIMENTAL MOTORSPORT // DOSSIER #VR-04";
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  background: #18202b;
+  border: 1px solid var(--border-metal);
+  padding: 0.15rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.15em;
+  color: var(--text-dim);
+}
+
+.story-lead-text {
+  font-family: var(--font-body);
+  font-size: 1.15rem;
+  line-height: 1.6;
+  color: #cbd5e1;
+  margin-bottom: 1.5rem;
+}
+
+.story-lead-text strong {
+  color: #fff;
+  font-weight: 700;
+}
+
+/* The Quote Banner */
+.engineer-quote-plaque {
+  background: #090c10;
+  border-left: 4px solid var(--hazard-yellow);
+  padding: 1.2rem 1.6rem;
+  margin-bottom: 1.5rem;
+  border-radius: 0 4px 4px 0;
+}
+
+.engineer-quote-plaque p {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #fff;
+  margin-bottom: 0.35rem;
+}
+
+.engineer-quote-plaque span {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--hazard-yellow);
+  letter-spacing: 0.15em;
+}
+
+/* 4 Mission Steps */
+.operation-four-stages {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.8rem;
+}
+
+.stage-badge {
+  background: #0d1218;
+  border: 1px solid var(--border-metal);
+  padding: 0.6rem 0.5rem;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.stage-badge .st-num {
+  font-family: var(--font-mono);
+  color: var(--hazard-yellow);
+  font-size: 0.75rem;
+}
+
+/* ========================================================
+   THE TWO HEAVY VAULT BOXES: TEAM A & TEAM B
+   ======================================================== */
+.team-vaults-selection-area {
+  margin-top: 1rem;
+}
+
+.vaults-prompt-banner {
+  text-align: center;
+  margin-bottom: 1.8rem;
+  font-family: var(--font-display);
+  letter-spacing: 0.15em;
+  font-size: 1.4rem;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.vaults-prompt-banner span {
+  color: var(--hazard-yellow);
+}
+
+.vault-doors-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2.5rem;
+  max-width: 1050px;
+  margin: 0 auto;
+}
+
+/* Heavy Mechanical Vault Door Box */
+.vault-door-card {
+  position: relative;
+  background: linear-gradient(180deg, #18202b 0%, #0e131a 100%);
+  border: 2px solid var(--border-metal);
+  border-radius: 6px;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Mechanical Corner Rivets / Bolts */
+.vault-door-card::before,
+.vault-door-card::after {
+  content: "";
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  background: #334155;
+  border-radius: 50%;
+  box-shadow: inset 0 1px 2px #000, 0 1px 0 rgba(255, 255, 255, 0.2);
+  z-index: 5;
+}
+.vault-door-card::before { top: 12px; left: 12px; }
+.vault-door-card::after { bottom: 12px; right: 12px; }
+
+/* Vault Card Header Band */
+.vault-card-topband {
+  background: #0a0d12;
+  border-bottom: 1px solid var(--border-metal);
+  padding: 0.8rem 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+}
+
+.vault-access-code {
+  color: var(--text-dim);
+  letter-spacing: 0.15em;
+}
+
+.vault-lock-indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  font-size: 0.72rem;
+}
+
+.vault-door-card.vault-team-a .vault-lock-indicator {
+  color: var(--accent-teamA);
+}
+
+.vault-door-card.vault-team-b .vault-lock-indicator {
+  color: var(--accent-teamB);
+}
+
+.lock-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.vault-team-a .lock-dot {
+  background: var(--accent-teamA);
+  box-shadow: 0 0 10px var(--accent-teamA);
+}
+
+.vault-team-b .lock-dot {
+  background: var(--accent-teamB);
+  box-shadow: 0 0 10px var(--accent-teamB);
+}
+
+/* Vault Inner Body */
+.vault-card-body {
+  padding: 3rem 2rem 2.5rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.vault-massive-number {
+  font-family: var(--font-race);
+  font-size: 1.25rem;
+  letter-spacing: 0.35em;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.vault-team-heading {
+  font-family: var(--font-race);
+  font-size: clamp(3.2rem, 6vw, 4.8rem);
+  font-weight: 700;
+  line-height: 0.85;
+  letter-spacing: 0.06em;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.vault-team-a .vault-team-heading span {
+  color: var(--accent-teamA);
+  text-shadow: 0 0 30px rgba(0, 210, 255, 0.4);
+}
+
+.vault-team-b .vault-team-heading span {
+  color: var(--accent-teamB);
+  text-shadow: 0 0 30px rgba(255, 85, 0, 0.4);
+}
+
+.vault-subcaption {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  letter-spacing: 0.15em;
+}
+
+/* Interactive Wheel Lock Graphic */
+.vault-dial-graphic {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  border: 3px dashed var(--border-metal);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  background: #0b0e13;
+  margin: 0.5rem 0;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s;
+}
+
+/* Action Trigger Bottom Band */
+.vault-card-footer {
+  margin-top: auto;
+  padding: 1.1rem 1.5rem;
+  background: #090c10;
+  border-top: 1px solid var(--border-metal);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.1rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: background 0.2s, color 0.2s;
+}
+
+.vault-card-footer .path-tag {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  font-weight: 400;
+}
+
+/* Hover States for Team A and Team B */
+.vault-door-card:hover {
+  transform: translateY(-8px);
+}
+
+.vault-door-card.vault-team-a:hover {
+  border-color: var(--accent-teamA);
+  box-shadow: 0 25px 60px rgba(0, 210, 255, 0.25), inset 0 0 25px rgba(0, 210, 255, 0.05);
+}
+
+.vault-door-card.vault-team-a:hover .vault-dial-graphic {
+  border-color: var(--accent-teamA);
+  transform: rotate(90deg);
+  box-shadow: 0 0 20px rgba(0, 210, 255, 0.3);
+}
+
+.vault-door-card.vault-team-a:hover .vault-card-footer {
+  background: var(--accent-teamA);
+  color: #000;
+}
+
+.vault-door-card.vault-team-a:hover .vault-card-footer .path-tag {
+  color: #000;
+}
+
+.vault-door-card.vault-team-b:hover {
+  border-color: var(--accent-teamB);
+  box-shadow: 0 25px 60px rgba(255, 85, 0, 0.25), inset 0 0 25px rgba(255, 85, 0, 0.05);
+}
+
+.vault-door-card.vault-team-b:hover .vault-dial-graphic {
+  border-color: var(--accent-teamB);
+  transform: rotate(-90deg);
+  box-shadow: 0 0 20px rgba(255, 85, 0, 0.3);
+}
+
+.vault-door-card.vault-team-b:hover .vault-card-footer {
+  background: var(--accent-teamB);
+  color: #000;
+}
+
+.vault-door-card.vault-team-b:hover .vault-card-footer .path-tag {
+  color: #000;
+}
+
+/* Footer */
+.facility-footer {
+  margin-top: 5rem;
+  padding: 2rem 0;
+  border-top: 1px solid var(--border-metal);
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 820px) {
+  .vault-doors-grid {
+    grid-template-columns: 1fr;
+    gap: 1.8rem;
+  }
+  .operation-four-stages {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .story-dossier-box {
+    padding: 1.5rem;
+  }
+}

@@ -1,0 +1,535 @@
+/* ========================================================
+   VAULT 04: LASER LOCKDOWN // FINAL CHALLENGE
+   Stealth Grid Action-Puzzle Aesthetic
+   ======================================================== */
+
+.laser-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 6, 12, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 2000;
+  overflow-y: auto;
+  padding: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+
+.laser-modal-overlay.active {
+  display: flex;
+}
+
+.laser-modal-window {
+  background: #060a12;
+  border: 2px solid var(--team-accent, #00d2ff);
+  box-shadow: 0 0 70px rgba(0, 0, 0, 0.95), 0 0 35px var(--team-glow, rgba(0, 210, 255, 0.35));
+  border-radius: 8px;
+  max-width: 980px;
+  width: 100%;
+  max-height: 95vh;
+  position: relative;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Window Top Bar */
+.laser-topbar {
+  background: #04070e;
+  border-bottom: 2px solid var(--border-metal, #222d3d);
+  padding: 0.65rem 1.4rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.laser-header-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--team-accent, #00d2ff);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+/* Content Area */
+.laser-content-area {
+  padding: 0.85rem 1.4rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  position: relative;
+}
+
+.laser-title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.laser-quest-heading {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  color: var(--hazard-yellow, #f59e0b);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  margin-bottom: 0.15rem;
+}
+
+.laser-main-title {
+  font-family: var(--font-race, sans-serif);
+  font-size: clamp(1.8rem, 3.2vw, 2.5rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #fff;
+  text-transform: uppercase;
+  line-height: 0.95;
+  margin: 0;
+}
+
+/* Telemetry Status Strip */
+.laser-telemetry-strip {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #080d16;
+  border: 1px solid var(--border-metal, #222d3d);
+  padding: 0.55rem 1.1rem;
+  border-radius: 6px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.78rem;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.laser-timer-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+  color: #f1f5f9;
+  letter-spacing: 0.08em;
+}
+
+.laser-timer-box.warning {
+  color: #ef4444;
+  animation: timerBlink 0.6s infinite;
+}
+
+.laser-chip-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.22rem 0.65rem;
+  border-radius: 3px;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+  background: #111827;
+  border: 1px solid #334155;
+  color: #94a3b8;
+}
+
+.laser-chip-pill.acquired {
+  background: rgba(16, 185, 129, 0.18);
+  border-color: #10b981;
+  color: #10b981;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+}
+
+.laser-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.22rem 0.65rem;
+  border-radius: 3px;
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.1em;
+}
+
+.laser-status-pill.ready {
+  background: rgba(6, 182, 212, 0.14);
+  border: 1px solid var(--team-accent, #00d2ff);
+  color: var(--team-accent, #00d2ff);
+}
+
+.laser-status-pill.playing {
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid #f59e0b;
+  color: #f59e0b;
+}
+
+.laser-status-pill.chip-collected {
+  background: rgba(16, 185, 129, 0.18);
+  border: 1px solid #10b981;
+  color: #10b981;
+}
+
+.laser-status-pill.failed {
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid #ef4444;
+  color: #ef4444;
+}
+
+.laser-status-pill.complete {
+  background: rgba(16, 185, 129, 0.25);
+  border: 1px solid #10b981;
+  color: #10b981;
+  box-shadow: 0 0 18px rgba(16, 185, 129, 0.5);
+}
+
+/* Canvas Arena Wrapper */
+.laser-arena-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  background: #04070d;
+  border: 2px solid var(--border-metal, #222d3d);
+  border-radius: 8px;
+  padding: 0.65rem;
+  box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.9);
+}
+
+.laser-canvas-box {
+  position: relative;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.8);
+}
+
+#laserCanvas, .laser-canvas, #laserCanvasA, #laserCanvasB {
+  display: block;
+  background: #060911;
+  border: 1px solid #151e2c;
+  cursor: crosshair;
+  max-width: 100%;
+  height: auto;
+}
+
+.btn-laser-action {
+  background: #111827;
+  border: 1px solid var(--border-metal, #222d3d);
+  color: #94a3b8;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.btn-laser-action:hover {
+  background: #1e293b;
+  color: #f1f5f9;
+  border-color: var(--team-accent, #00d2ff);
+}
+
+/* Screen Flash on Collision */
+.laser-flash-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(239, 68, 68, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.1s ease-out;
+  z-index: 10;
+}
+
+.laser-flash-overlay.active {
+  opacity: 1;
+}
+
+/* Controls & Legend Strip */
+.laser-footer-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 576px;
+  margin-top: 0.55rem;
+  gap: 1rem;
+}
+
+.laser-legend-strip {
+  display: flex;
+  gap: 1rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  color: #64748b;
+}
+
+.laser-dpad-mini {
+  display: flex;
+  gap: 0.35rem;
+}
+
+.btn-dpad-mini {
+  width: 36px;
+  height: 32px;
+  background: #111827;
+  border: 1px solid var(--border-metal, #222d3d);
+  color: #cbd5e1;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.85rem;
+  transition: all 0.15s;
+  user-select: none;
+}
+
+.btn-dpad-mini:hover {
+  background: var(--team-accent, #00d2ff);
+  color: #000;
+  border-color: var(--team-accent, #00d2ff);
+}
+
+/* Modal Briefing Overlay */
+.laser-briefing-modal {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 7, 13, 0.94);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  animation: popIn 0.3s ease-out;
+}
+
+.laser-briefing-modal.hidden {
+  display: none;
+}
+
+.briefing-stamp {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  color: #ef4444;
+  letter-spacing: 0.2em;
+  border: 1px solid #ef4444;
+  padding: 0.25rem 0.75rem;
+  border-radius: 3px;
+  margin-bottom: 0.75rem;
+}
+
+.briefing-title {
+  font-family: var(--font-display, sans-serif);
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.08em;
+  margin: 0 0 1rem;
+  text-transform: uppercase;
+}
+
+.briefing-text {
+  font-family: var(--font-body, sans-serif);
+  font-size: 1.05rem;
+  color: #cbd5e1;
+  max-width: 600px;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+.btn-start-mission {
+  background: var(--team-accent, #00d2ff);
+  color: #000;
+  border: 1px solid var(--team-accent, #00d2ff);
+  box-shadow: 0 0 25px var(--team-glow, rgba(0, 210, 255, 0.5));
+  font-family: var(--font-display, sans-serif);
+  font-weight: 900;
+  font-size: 1.05rem;
+  letter-spacing: 0.12em;
+  padding: 0.85rem 2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+
+.btn-start-mission:hover {
+  filter: brightness(1.15);
+  transform: translateY(-2px);
+  box-shadow: 0 0 35px var(--team-glow, rgba(0, 210, 255, 0.75));
+}
+
+/* Timeout / Failed Overlay */
+.laser-failed-modal {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(18, 6, 8, 0.95);
+  backdrop-filter: blur(8px);
+  z-index: 35;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  animation: popIn 0.3s ease-out;
+}
+
+.laser-failed-modal.active {
+  display: flex;
+}
+
+.failed-title {
+  font-family: var(--font-display, sans-serif);
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #ef4444;
+  letter-spacing: 0.08em;
+  margin: 0 0 0.5rem;
+  text-transform: uppercase;
+}
+
+.btn-retry-mission {
+  background: #ef4444;
+  color: #fff;
+  border: 1px solid #ef4444;
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.5);
+  font-family: var(--font-display, sans-serif);
+  font-weight: 900;
+  font-size: 1rem;
+  letter-spacing: 0.12em;
+  padding: 0.8rem 1.8rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+
+.btn-retry-mission:hover {
+  filter: brightness(1.15);
+  transform: translateY(-2px);
+}
+
+/* Victory Overlay */
+.laser-victory-modal {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(5, 18, 12, 0.96);
+  backdrop-filter: blur(8px);
+  z-index: 40;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 2rem;
+  animation: popIn 0.4s ease-out;
+}
+
+.laser-victory-modal.active {
+  display: flex;
+}
+
+.victory-stamp {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.75rem;
+  color: #10b981;
+  letter-spacing: 0.2em;
+  border: 1px solid #10b981;
+  padding: 0.25rem 0.75rem;
+  border-radius: 3px;
+  margin-bottom: 0.5rem;
+}
+
+.victory-title {
+  font-family: var(--font-display, sans-serif);
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #10b981;
+  letter-spacing: 0.08em;
+  margin: 0.2rem 0 0.35rem;
+  text-transform: uppercase;
+}
+
+.victory-sub {
+  font-family: var(--font-body, sans-serif);
+  font-size: 1.05rem;
+  color: #cbd5e1;
+  margin-bottom: 1rem;
+}
+
+.vault-code-plaque {
+  background: #030805;
+  border: 2px solid #10b981;
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.35);
+  padding: 0.75rem 1.6rem;
+  border-radius: 4px;
+  margin-bottom: 1.25rem;
+  display: inline-block;
+}
+
+.code-lbl {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.72rem;
+  color: #94a3b8;
+  letter-spacing: 0.15em;
+  margin-bottom: 0.25rem;
+}
+
+.code-digits {
+  font-family: var(--font-mono, monospace);
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.25em;
+  text-shadow: 0 0 18px rgba(16, 185, 129, 0.8);
+}
+
+.btn-continue-exec {
+  background: #10b981;
+  color: #000;
+  border: 1px solid #10b981;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.45);
+  font-family: var(--font-display, sans-serif);
+  font-weight: 900;
+  font-size: 1rem;
+  letter-spacing: 0.12em;
+  padding: 0.75rem 1.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+
+.btn-continue-exec:hover {
+  filter: brightness(1.15);
+  transform: translateY(-2px);
+}
+
+.exec-instruction-text {
+  display: none;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px dashed #10b981;
+  color: #6ee7b7;
+  padding: 0.75rem 1.2rem;
+  border-radius: 4px;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  margin-top: 1rem;
+  max-width: 540px;
+}
+
+.exec-instruction-text.active {
+  display: block;
+}

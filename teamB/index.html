@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TEAM B // SECTOR BETA // Project VELOCITY Vault Console</title>
+  <link rel="stylesheet" href="../css/main.css">
+  <link rel="stylesheet" href="../css/team.css">
+  <link rel="stylesheet" href="../css/minigame.css">
+  <link rel="stylesheet" href="../css/nav_game.css">
+  <link rel="stylesheet" href="../css/blueprint_game.css">
+  <link rel="stylesheet" href="../css/laser_game.css">
+  <link rel="stylesheet" href="../css/passcode_modal.css">
+</head>
+<body class="theme-team-b">
+  
+  <div class="hazard-tape"></div>
+
+  <header class="facility-topbar">
+    <div class="topbar-classified-stamp" style="border-color: var(--accent-teamB); color: var(--accent-teamB);">
+      <span class="blink-led" style="background: var(--accent-teamB); box-shadow: 0 0 8px var(--accent-teamB);"></span>
+      TEAM B VAULT TERMINAL // ACTIVE
+    </div>
+    <div class="topbar-meta">
+      <span>ROUTE: /teamB</span>
+      <span>CLEARANCE: BETA DIVISION</span>
+      <button class="topbar-btn" id="audioToggleBtn" title="Toggle Sound FX">
+        <span id="audioStatusIcon">🔊</span> SOUND
+      </button>
+      <button class="topbar-btn" id="fsToggleBtn" title="Toggle Fullscreen">
+        <span id="fsIcon">⛶</span> FULLSCREEN
+      </button>
+      <button class="topbar-btn" id="adminResetBtn" title="Executive Reset All Levels" onclick="vaultSecurity && vaultSecurity.openAdminResetModal()">
+        <span>🔒</span> RESET GAME
+      </button>
+    </div>
+  </header>
+
+  <main class="dossier-container">
+    
+    <div class="team-nav-strip">
+      <a href="../" class="team-nav-back">&larr; EXIT TO MAIN FACILITY</a>
+      <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-dim);">SYSTEM: VELOCITY-SYS-B</span>
+    </div>
+
+    <section class="team-dossier-header" style="border-left-color: var(--accent-teamB);">
+      <span class="team-dept-tag" style="color: var(--accent-teamB);">EXPERIMENTAL MOTORSPORT // SECTOR BETA</span>
+      <h1 class="team-main-heading">TEAM <span>B</span> VAULT ARRAY</h1>
+      <p class="team-lead-desc">
+        Welcome, Division B Engineers. The facility has unsealed your four encrypted vaults. 
+        Each vault holds a critical dismantled system of prototype VELOCITY. Decipher the blueprints and reconstruct the machine.
+      </p>
+    </section>
+
+    <!-- Grand Victory Banner (appears when all 4 vaults are complete) -->
+    <div class="grand-victory-banner" id="grandVictoryBanner">
+      <div style="font-size: 2.5rem; margin-bottom: 0.35rem;">🏆</div>
+      <h2 class="grand-vic-title">OPERATION REBUILD // FULL SYSTEM RESTORATION COMPLETE!</h2>
+      <p class="grand-vic-sub">
+        All 4 critical vaults have been decoded, assembled, and verified.<br>
+        Show this master terminal screen to the event executive to finalize Team B's score!
+      </p>
+    </div>
+
+    <!-- Dynamic Mission Directive Strip -->
+    <div class="mission-progress-strip" style="border-left-color: var(--accent-teamB);">
+      <div class="progress-directive-text" id="missionDirectiveText">
+        <span>⚡</span> <span>OBJECTIVE: Restore vehicle motor coolant in <strong>Vault 1</strong> to extract the first physical key.</span>
+      </div>
+      <button class="topbar-btn" onclick="vaultSecurity && vaultSecurity.resetAllProgress()" style="font-size: 0.72rem; padding: 0.25rem 0.65rem;" title="Reset all progress to initial locked state">
+        ↺ RESET MISSION
+      </button>
+    </div>
+
+    <!-- 4 Vaults Section -->
+    <section class="vaults-assembly-section">
+      <div class="assembly-section-title">
+        <span>4 CRITICAL VAULT SYSTEMS</span>
+        <span class="vault-progress-pill" style="color: var(--accent-teamB);" id="vaultCounterText">STATUS: 0 / 4 COMPLETED</span>
+      </div>
+
+      <div class="vaults-grid-container">
+        <!-- Vault 1 -->
+        <div class="vault-card-box" id="vaultCard1">
+          <div class="vault-subsystem-id">
+            <span>SYS-01 // POWER GRID</span>
+            <span class="vault-status-indicator" id="tagVault1">READY</span>
+          </div>
+          <div class="vault-icon-badge">⚡</div>
+          <h3 class="vault-subsystem-title">Vault 1</h3>
+          <p class="vault-subsystem-desc">Restoration required to activate prototype vehicle motor and extract authorization code.</p>
+          <button class="vault-inspect-btn" onclick="vaultSecurity ? vaultSecurity.openVault(1) : openPowerGridGameB()">
+            OPEN
+          </button>
+        </div>
+
+        <!-- Vault 2 -->
+        <div class="vault-card-box locked" id="vaultCard2">
+          <div class="vault-subsystem-id">
+            <span>SYS-02 // AERO</span>
+            <span class="vault-status-indicator" id="tagVault2">LOCKED 🔒</span>
+          </div>
+          <div class="vault-icon-badge">🤖</div>
+          <h3 class="vault-subsystem-title">Vault 2</h3>
+          <p class="vault-subsystem-desc">Autonomous navigation through facility maze required to extract aerodynamic stabilization code.</p>
+          <button class="vault-inspect-btn" onclick="vaultSecurity ? vaultSecurity.openVault(2) : openNavGameB()">
+            ENTER CODE 🔑
+          </button>
+        </div>
+
+        <!-- Vault 3 -->
+        <div class="vault-card-box locked" id="vaultCard3">
+          <div class="vault-subsystem-id">
+            <span>SYS-03 // POWERTRAIN</span>
+            <span class="vault-status-indicator" id="tagVault3">LOCKED 🔒</span>
+          </div>
+          <div class="vault-icon-badge">📐</div>
+          <h3 class="vault-subsystem-title">Vault 3</h3>
+          <p class="vault-subsystem-desc">Corrupted chassis blueprint recovery required to reconstruct powertrain foundation.</p>
+          <button class="vault-inspect-btn" onclick="vaultSecurity ? vaultSecurity.openVault(3) : openBlueprintGameB()">
+            ENTER CODE 🔑
+          </button>
+        </div>
+
+        <!-- Vault 4 -->
+        <div class="vault-card-box locked" id="vaultCard4">
+          <div class="vault-subsystem-id">
+            <span>SYS-04 // TELEMETRY</span>
+            <span class="vault-status-indicator" id="tagVault4">LOCKED 🔒</span>
+          </div>
+          <div class="vault-icon-badge">🚨</div>
+          <h3 class="vault-subsystem-title">Vault 4</h3>
+          <p class="vault-subsystem-desc">High-security laser lockdown retrieval required to extract final authorization chip.</p>
+          <button class="vault-inspect-btn" onclick="vaultSecurity ? vaultSecurity.openVault(4) : openLaserGameB()">
+            ENTER CODE 🔑
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- User Task Staging Area -->
+    <div class="user-staging-banner">
+      <h3>TEAM B MISSION STAGING AREA</h3>
+      <p>
+        The base console for <strong>Team B (/teamB)</strong> is online.<br>
+        Tell me what challenge, puzzle, question, or task you want to present inside Team B!
+      </p>
+    </div>
+
+  </main>
+
+  <!-- Mini-Game Modal: Fluid Conduit Carving (Where's My Water Style - Team B) -->
+  <div class="game-modal-overlay" id="powerGridModalB">
+    <div class="game-window" style="border-color: var(--accent-teamB); box-shadow: 0 0 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(255, 85, 0, 0.35);">
+      <!-- Window Top Bar -->
+      <div class="game-window-topbar">
+        <div class="game-header-tag" style="color: var(--accent-teamB);">
+          <span class="blink-led" style="background: var(--accent-teamB); box-shadow: 0 0 8px var(--accent-teamB);"></span>
+          VAULT 01 // SUBTERRANEAN KINETIC LAB // IGNITION CONDUIT
+        </div>
+        <button class="game-close-btn" onclick="closePowerGridGameB()">&times;</button>
+      </div>
+
+      <div class="game-content-area">
+        <div class="game-header-row">
+          <div class="game-title-group">
+            <div class="game-quest-heading" style="color: var(--accent-teamB);">OPERATION REBUILD // QUEST 02</div>
+            <h2 class="game-main-title">KINETIC FLUID RESTORATION</h2>
+          </div>
+          <div class="game-brief-badge" style="border-color: rgba(255, 85, 0, 0.4);">
+            <span>⚠️</span> DODGE CORROSIVE ACID &amp; COLLECT 3 MICRO-CORES
+          </div>
+        </div>
+
+        <!-- Cockpit Telemetry HUD Strip -->
+        <div class="fluid-telemetry-strip">
+          <!-- 3 Collectible Micro-Cores -->
+          <div class="cores-collector-box">
+            <span class="cores-label">TELEMETRY CORES:</span>
+            <div class="cores-list">
+              <div class="core-badge" id="coreBadgeB_1" title="Core 1">◆</div>
+              <div class="core-badge" id="coreBadgeB_2" title="Core 2">◆</div>
+              <div class="core-badge" id="coreBadgeB_3" title="Core 3">◆</div>
+            </div>
+          </div>
+
+          <!-- Tank Fill Progress -->
+          <div class="tank-telemetry-box">
+            <div class="tank-header-label">
+              <span>KINETIC INTAKE:</span>
+              <span id="tankPctB" style="color: var(--accent-teamB); font-weight: 700;">0%</span>
+            </div>
+            <div class="tank-progress-track">
+              <div class="tank-progress-fill" id="tankFillB" style="background: var(--accent-teamB); box-shadow: 0 0 10px var(--accent-teamB);"></div>
+            </div>
+          </div>
+
+          <!-- Tachometer & Motor Status -->
+          <div class="motor-tachometer-box">
+            <div class="tachometer-dial">
+              <div class="tacho-val" id="rpmTextB">0 RPM</div>
+              <div class="tacho-label">TURBINE VELOCITY</div>
+            </div>
+            <span class="status-indicator-badge off" id="statusBadgeB">
+              <span class="status-dot"></span> MOTOR OFF
+            </span>
+          </div>
+        </div>
+
+        <!-- Where's My Water Canvas Arena -->
+        <div class="carve-canvas-wrapper">
+          <div class="valve-control-bar">
+            <button class="valve-release-btn" id="valveBtnB" style="border-color: var(--accent-teamB); box-shadow: 0 0 15px rgba(255, 85, 0, 0.25);" onclick="puzzleB && puzzleB.toggleGate()">
+              <span>🚪</span> OPEN VALVE
+            </button>
+          </div>
+          <canvas id="waterCanvasB"></canvas>
+          <div class="carve-prompt-overlay" id="promptOverlayB">
+            <span>⛏️</span> CARVE CHANNELS &bull; AVOID PURPLE ACID &bull; HIT PIVOT FIN
+          </div>
+        </div>
+
+        <!-- Success Banner -->
+        <div class="success-banner-box" id="successBoxB">
+          <h3 class="success-title">⚡ POWER RESTORED! ⚡</h3>
+          <p style="font-family: var(--font-body, sans-serif); font-size: 1.15rem; color: #cbd5e1;">
+            Motor power restored. Vault authorization code:
+          </p>
+          <div class="auth-code-plaque">
+            <span class="code-highlight">VEL-204</span>
+          </div>
+
+          <div class="instructions-reveal-box active" id="instructionsBoxB" style="display: block; margin-top: 1rem;">
+            Show this screen to the event executive to collect the physical key for Vault 01.
+          </div>
+        </div>
+
+        <!-- Control Strip -->
+        <div class="game-control-strip">
+          <div style="display: flex; gap: 0.75rem; align-items: center;">
+            <button class="game-btn btn-reset" onclick="resetFluidPuzzleB()">
+              <span>↺</span> REFILL &amp; RESET DIRT
+            </button>
+            <button class="game-btn btn-boost" onclick="puzzleB && puzzleB.boostFluid()" title="Inject pneumatic pressure surge (or press Space)">
+              <span>⚡</span> BOOST PRESSURE (SPACE)
+            </button>
+          </div>
+          
+          <button class="game-btn btn-continue" id="continueBtnB" style="display: none;" onclick="continueFromVault(1)">
+            CONTINUE &rarr;
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Mini-Game Modal: Autonomous Navigation (Team B) -->
+  <div class="nav-game-overlay" id="navGameModalB">
+    <div class="nav-game-window" style="border-color: var(--accent-teamB); box-shadow: 0 0 60px rgba(0, 0, 0, 0.9), 0 0 35px rgba(255, 85, 0, 0.35);">
+      <!-- Window Top Bar -->
+      <div class="nav-topbar">
+        <div class="nav-header-tag" style="color: var(--accent-teamB);">
+          <span class="blink-led" style="background: var(--accent-teamB); box-shadow: 0 0 8px var(--accent-teamB);"></span>
+          VAULT 02 // SECTOR BETA // AUTONOMOUS GUIDANCE
+        </div>
+        <button class="game-close-btn" onclick="closeNavGameB()">&times;</button>
+      </div>
+
+      <div class="nav-content-area">
+        <div class="nav-title-row">
+          <div>
+            <div class="nav-quest-heading" style="color: var(--accent-teamB);">OPERATION REBUILD // QUEST 03</div>
+            <h2 class="nav-main-title">AUTONOMOUS NAVIGATION</h2>
+          </div>
+          <div class="nav-brief-badge" style="border-color: rgba(255, 85, 0, 0.4);">
+            <span>🤖</span> AVOID 4 HAZARD BLOCKS &bull; REACH DESTINATION
+          </div>
+        </div>
+
+        <!-- Mission Briefing Banner -->
+        <div class="nav-mission-banner" style="border-left-color: var(--accent-teamB);">
+          <span style="font-size: 1.05rem;">🎯</span>
+          <span><strong>MISSION:</strong> Reach the finish without hitting a hazard.</span>
+        </div>
+
+        <!-- Telemetry Status Strip -->
+        <div class="nav-telemetry-strip">
+          <span class="nav-status-badge ready" id="navStatusBadgeB">
+            <span>⚡</span> READY
+          </span>
+          <span id="navCoordTextB" style="color: var(--accent-teamB); font-weight: 700;">[X: 1, Y: 0]</span>
+          <span id="navMoveCountB" style="color: #cbd5e1;">MOVES: 0</span>
+        </div>
+
+        <!-- Two-Column Arena: 5x5 Maze on Left, Sequence & Controls on Right -->
+        <div class="nav-arena-grid">
+          <!-- 5x5 Grid Maze -->
+          <div class="maze-grid-wrapper" style="border-color: rgba(255, 85, 0, 0.35);">
+            <div class="maze-5x5-board" id="mazeBoardB">
+              <!-- Dynamically populated with 25 tiles + smooth-gliding robot token -->
+            </div>
+            <div class="maze-legend-row">
+              <span>🤖 ROBOT</span>
+              <span style="color: #ef4444;">⚠️ HAZARD</span>
+              <span style="color: #10b981;">🏁 FINISH</span>
+            </div>
+          </div>
+
+          <!-- Controls & Sequence Panel -->
+          <div class="nav-controls-wrapper">
+            <!-- Sequence Tags Panel -->
+            <div class="sequence-panel-box">
+              <div class="seq-panel-header">
+                <span>MOVEMENT SEQUENCE</span>
+                <span style="font-size: 0.7rem; color: var(--accent-teamB);">QUEUE EXECUTION</span>
+              </div>
+              <div class="sequence-tags-list" id="seqListB">
+                <!-- Dynamically populated chips -->
+              </div>
+            </div>
+
+            <!-- Directional D-Pad -->
+            <div class="dpad-container">
+              <div class="dpad-row">
+                <button class="dpad-btn" id="dpadB_UP" title="Move UP">
+                  <span class="arrow-icon" style="color: var(--accent-teamB);">▲</span>
+                  <span>UP</span>
+                </button>
+              </div>
+              <div class="dpad-row">
+                <button class="dpad-btn" id="dpadB_LEFT" title="Move LEFT">
+                  <span class="arrow-icon" style="color: var(--accent-teamB);">◀</span>
+                  <span>LEFT</span>
+                </button>
+                <button class="dpad-btn" id="dpadB_DOWN" title="Move DOWN">
+                  <span class="arrow-icon" style="color: var(--accent-teamB);">▼</span>
+                  <span>DOWN</span>
+                </button>
+                <button class="dpad-btn" id="dpadB_RIGHT" title="Move RIGHT">
+                  <span class="arrow-icon" style="color: var(--accent-teamB);">▶</span>
+                  <span>RIGHT</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Sequence Action Row -->
+            <div class="nav-actions-row">
+              <button class="btn-run-robot" id="btnRunB" style="background: var(--accent-teamB); border-color: var(--accent-teamB); box-shadow: 0 0 20px rgba(255, 85, 0, 0.45);">
+                <span>RUN ROBOT</span> <span>▶</span>
+              </button>
+              <button class="btn-secondary" id="btnUndoB" title="Remove Last Move">
+                <span>UNDO</span> <span>↶</span>
+              </button>
+              <button class="btn-secondary" id="btnClearB" title="Clear Entire Route">
+                <span>CLEAR ROUTE</span> <span>✕</span>
+              </button>
+              <button class="btn-secondary" id="btnResetB" title="Reset Puzzle to Start">
+                <span>RESET</span> <span>↺</span>
+              </button>
+            </div>
+
+            <!-- Alert Notification Banner -->
+            <div class="nav-alert-banner" id="navAlertB">
+              PATH BLOCKED! Recalculate your route.
+            </div>
+
+            <!-- Success Overlay Card -->
+            <div class="nav-success-box" id="navSuccessB">
+              <div class="success-stamp-badge">VERIFIED // ACCESS GRANTED</div>
+              <h3 class="success-mission-title">MISSION COMPLETE</h3>
+              <p class="success-subline">Navigation systems online.</p>
+              <div class="auth-code-card">
+                <span class="auth-code-lbl">Vault Authorization Code:</span>
+                <span class="auth-code-val">VEL-307</span>
+              </div>
+              <div class="exec-instruction-box active" id="navInstructionsB" style="display: block; margin: 0.75rem 0;">
+                Show this screen to the event executive to collect the physical key for Vault 02.
+              </div>
+              <button class="btn-exec" style="background: var(--accent-teamB); color: #000; font-weight: 900;" onclick="continueFromVault(2)">
+                CONTINUE &rarr;
+              </button>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Mini-Game Modal: Blueprint Recovery (Vault 03 - Team B) -->
+  <div class="bp-modal-overlay" id="blueprintModalB">
+    <div class="bp-modal-window" style="border-color: var(--accent-teamB); box-shadow: 0 0 70px rgba(0, 0, 0, 0.95), 0 0 35px rgba(255, 85, 0, 0.35);">
+      <!-- Top Bar -->
+      <div class="bp-topbar">
+        <div class="bp-header-tag" style="color: var(--accent-teamB);">
+          <span class="blink-led" style="background: var(--accent-teamB); box-shadow: 0 0 8px var(--accent-teamB);"></span>
+          VAULT 03 // SECTOR BETA // CHASSIS FOUNDATION
+        </div>
+        <div style="display: flex; align-items: center; gap: 1rem;">
+          <div class="bp-timer-badge" id="bpTimerB">
+            <span>⏱️</span> <span>TIME: 00:45</span>
+          </div>
+          <button class="game-close-btn" onclick="closeBlueprintGameB()">&times;</button>
+        </div>
+      </div>
+
+      <div class="bp-content-area">
+        <div class="bp-title-row">
+          <div>
+            <div class="bp-quest-heading" style="color: var(--accent-teamB);">VAULT 01: FOUNDATION // OPERATION REBUILD</div>
+            <h2 class="bp-main-title">BLUEPRINT RECOVERY: REBUILD THE CHASSIS</h2>
+          </div>
+          <div class="nav-brief-badge" style="border-color: rgba(255, 85, 0, 0.4);">
+            <span>📐</span> DRAG 4 REQUIRED COMPONENTS &bull; 45S LIMIT
+          </div>
+        </div>
+
+        <!-- System Alert Banner -->
+        <div class="bp-alert-strip" style="border-left-color: var(--accent-teamB);">
+          <span style="font-size: 1.15rem;">⚠️</span>
+          <span><strong>SYSTEM ALERT:</strong> VELOCITY's original blueprint has been corrupted. Four essential components are missing. Identify and install the 4 required components before the timer expires.</span>
+        </div>
+
+        <!-- Authorization Code Digits Tracker -->
+        <div class="bp-code-tracker">
+          <span class="bp-code-label">VAULT AUTHORIZATION CODE PROGRESS:</span>
+          <div class="bp-digits-display">
+            <div class="bp-digit-cell" id="bpDigitB_1">_</div>
+            <div class="bp-digit-cell" id="bpDigitB_2">_</div>
+            <div class="bp-digit-cell" id="bpDigitB_3">_</div>
+            <div class="bp-digit-cell" id="bpDigitB_4">_</div>
+          </div>
+        </div>
+
+        <!-- Interactive CAD Schematic Container -->
+        <div class="bp-schematic-container" style="border-color: rgba(255, 85, 0, 0.35);">
+          <span class="bp-watermark" style="color: rgba(255, 85, 0, 0.35);">CAD SPEC // CHASSIS BLUEPRINT v4.7</span>
+
+          <!-- Vehicle Chassis Vector Graphic -->
+          <svg class="bp-chassis-svg" viewBox="0 0 760 160" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <line x1="20" y1="80" x2="740" y2="80" stroke="rgba(255, 85, 0, 0.2)" stroke-dasharray="6 4" stroke-width="1.5" />
+            <path d="M 60 70 L 140 40 L 460 40 L 560 55 L 680 70 L 680 90 L 560 105 L 460 120 L 140 120 L 60 90 Z" 
+                  stroke="rgba(255, 85, 0, 0.45)" stroke-width="2.5" fill="rgba(255, 85, 0, 0.03)" />
+            <path d="M 280 50 L 420 50 L 450 75 L 450 85 L 420 110 L 280 110 L 260 85 L 260 75 Z" 
+                  stroke="rgba(255, 85, 0, 0.3)" stroke-width="1.5" fill="rgba(255, 85, 0, 0.05)" />
+            <line x1="160" y1="20" x2="160" y2="140" stroke="rgba(255, 85, 0, 0.5)" stroke-width="2" stroke-dasharray="4 2" />
+            <line x1="590" y1="20" x2="590" y2="140" stroke="rgba(255, 85, 0, 0.5)" stroke-width="2" stroke-dasharray="4 2" />
+            <rect x="135" y="10" width="50" height="25" rx="3" stroke="rgba(255, 85, 0, 0.4)" stroke-width="1.5" fill="rgba(255, 85, 0, 0.08)" />
+            <rect x="135" y="125" width="50" height="25" rx="3" stroke="rgba(255, 85, 0, 0.4)" stroke-width="1.5" fill="rgba(255, 85, 0, 0.08)" />
+            <rect x="565" y="10" width="50" height="25" rx="3" stroke="rgba(255, 85, 0, 0.4)" stroke-width="1.5" fill="rgba(255, 85, 0, 0.08)" />
+            <rect x="565" y="125" width="50" height="25" rx="3" stroke="rgba(255, 85, 0, 0.4)" stroke-width="1.5" fill="rgba(255, 85, 0, 0.08)" />
+            <text x="165" y="85" fill="rgba(255, 85, 0, 0.7)" font-family="monospace" font-size="9" text-anchor="middle">FRONT AXLE</text>
+            <text x="350" y="83" fill="rgba(255, 85, 0, 0.7)" font-family="monospace" font-size="9" text-anchor="middle">MID-MOTOR CELL</text>
+            <text x="590" y="85" fill="rgba(255, 85, 0, 0.7)" font-family="monospace" font-size="9" text-anchor="middle">REAR SUSPENSION</text>
+          </svg>
+
+          <!-- 4 Component Drop Slots -->
+          <div class="bp-slots-grid" id="bpGameB_slots">
+            <!-- Dynamically populated slots -->
+          </div>
+
+          <!-- Assembly Error Toast -->
+          <div class="bp-error-toast" id="bpErrorToastB">
+            ⚠️ ASSEMBLY ERROR // INCOMPATIBLE CHASSIS SPECIFICATION
+          </div>
+        </div>
+
+        <!-- Parts Tray (8 Components) -->
+        <div class="bp-tray-wrapper">
+          <div class="bp-tray-header">
+            <span>MECHANICAL COMPONENTS TRAY (SELECT OR DRAG 4 REQUIRED)</span>
+            <span style="font-size: 0.7rem; color: var(--accent-teamB);">8 UNITS DETECTED</span>
+          </div>
+          <div class="bp-parts-grid" id="bpGameB_parts">
+            <!-- Dynamically populated parts -->
+          </div>
+        </div>
+
+        <!-- Action Controls & Instructions -->
+        <div class="bp-actions-strip">
+          <span class="bp-hint-text">
+            💡 Drag components into matching slots or click component then click target slot.
+          </span>
+          <button class="btn-bp-reset" onclick="blueprintGameB && blueprintGameB.reset()">
+            <span>↺</span> RESTART TIMER
+          </button>
+        </div>
+
+        <!-- Timeout Box -->
+        <div class="bp-timeout-box" id="bpTimeoutB">
+          <h3 style="font-family: var(--font-display); font-size: 1.4rem; color: #ef4444; margin-bottom: 0.35rem;">
+            ⏱️ ASSEMBLY TIMEOUT!
+          </h3>
+          <p style="font-family: var(--font-body); color: #cbd5e1; margin-bottom: 0.75rem;">
+            Blueprint corrupted before completion. Recalibrating diagnostic protocols...
+          </p>
+          <button class="btn-bp-reset" style="border-color: #ef4444; color: #fff;" onclick="blueprintGameB && blueprintGameB.reset()">
+            RETRY BLUEPRINT RECOVERY ↺
+          </button>
+        </div>
+
+        <!-- Victory Reconstruction Card -->
+        <div class="bp-success-card" id="bpSuccessB">
+          <div class="success-stamp-badge">FOUNDATION RESTORED // BLUEPRINT RECONSTRUCTED</div>
+          <h3 class="bp-success-title">FOUNDATION RESTORED</h3>
+          <p class="bp-success-sub">All 4 essential chassis components secured into blueprint specifications.</p>
+          <div class="bp-code-reveal-box">
+            <div class="bp-code-title">AUTHORIZATION CODE</div>
+            <div class="bp-code-number">4729</div>
+          </div>
+          <div class="bp-exec-box" id="bpExecBoxB" style="display: block; margin: 0.75rem 0;">
+            Show the success screen to the event executive to collect the physical key for Vault 03.
+          </div>
+          <div>
+            <button class="bp-btn-continue" style="background: var(--accent-teamB); color: #000; font-weight: 900;" onclick="continueFromVault(3)">
+              CONTINUE &rarr;
+            </button>
+          </div>
+          <div class="bp-closing-quote">
+            "The foundation is recovered. The real engineering challenge has only just begun."
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Mini-Game Modal: LASER LOCKDOWN (Team B - Vault 4) -->
+  <div class="laser-modal-overlay" id="laserModalB">
+    <div class="laser-modal-window" style="border-color: var(--accent-teamB); box-shadow: 0 0 70px rgba(0, 0, 0, 0.95), 0 0 35px rgba(255, 85, 0, 0.35);">
+      <!-- Window Top Bar -->
+      <div class="laser-topbar">
+        <div class="laser-header-tag" style="color: var(--accent-teamB);">
+          <span class="blink-led" style="background: var(--accent-teamB); box-shadow: 0 0 8px var(--accent-teamB);"></span>
+          VAULT 04 // SECURITY SYSTEM // LASER LOCKDOWN
+        </div>
+        <button class="game-close-btn" onclick="closeLaserGameB()">&times;</button>
+      </div>
+
+      <div class="laser-content-area">
+        <div class="laser-title-row">
+          <div>
+            <div class="laser-quest-heading">OPERATION REBUILD // FINAL CHALLENGE</div>
+            <h2 class="laser-main-title">LASER LOCKDOWN</h2>
+          </div>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <button class="btn-laser-action" onclick="laserGameB && laserGameB.togglePause()" title="Pause/Resume">
+              ⏸ PAUSE
+            </button>
+            <button class="btn-laser-action" onclick="laserGameB && laserGameB.retry()" title="Reset Level">
+              ↺ RESET
+            </button>
+          </div>
+        </div>
+
+        <!-- Telemetry Status Strip -->
+        <div class="laser-telemetry-strip">
+          <div class="laser-timer-box">
+            <span>⏱️</span>
+            <span id="laserTimerB">TIME: 01:15</span>
+          </div>
+
+          <div class="laser-chip-pill" id="laserChipB">
+            <span>○</span> ACCESS CHIP: MISSING
+          </div>
+
+          <div class="laser-status-pill ready" id="laserStatusB">
+            READY
+          </div>
+        </div>
+
+        <!-- Canvas Arena Wrapper -->
+        <div class="laser-arena-wrapper">
+          <div class="laser-canvas-box">
+            <canvas id="laserCanvasB" class="laser-canvas" width="576" height="480"></canvas>
+
+            <!-- Screen Flash on Collision -->
+            <div class="laser-flash-overlay" id="laserFlashB"></div>
+
+            <!-- Modal Briefing Overlay -->
+            <div class="laser-briefing-modal" id="laserBriefingB">
+              <div class="briefing-stamp">SECURITY BREACH // VAULT 04</div>
+              <h3 class="briefing-title">MISSION BRIEFING</h3>
+              <p class="briefing-text">
+                VELOCITY's final engineering blueprint is locked inside the facility's security system.<br><br>
+                A maintenance robot has been deployed to retrieve the authorization chip.<br><br>
+                Security lasers are active. The exit is sealed.<br><br>
+                Collect the access chip, navigate the laser network, and reach the extraction point before the security system locks down.
+              </p>
+              <button class="btn-start-mission" style="background: var(--accent-teamB); border-color: var(--accent-teamB); box-shadow: 0 0 25px rgba(255, 85, 0, 0.5);" onclick="laserGameB && laserGameB.startMission()">
+                START MISSION ▶
+              </button>
+            </div>
+
+            <!-- Timeout / Failed Overlay -->
+            <div class="laser-failed-modal" id="laserFailedB">
+              <div style="font-size: 3rem; margin-bottom: 0.5rem;">🚨</div>
+              <h3 class="failed-title">SECURITY LOCKDOWN — MISSION FAILED</h3>
+              <p style="font-family: var(--font-body); color: #cbd5e1; max-width: 480px; margin-bottom: 1.5rem; line-height: 1.5;">
+                The security lockdown timer expired before the authorization chip was extracted.<br>
+                Recalibrate your movement timing and retry.
+              </p>
+              <button class="btn-retry-mission" onclick="laserGameB && laserGameB.retry()">
+                RETRY MISSION ↺
+              </button>
+            </div>
+
+            <!-- Victory Overlay -->
+            <div class="laser-victory-modal" id="laserVictoryB">
+              <div class="victory-stamp">SECURITY OVERRIDE SUCCESSFUL</div>
+              <h3 class="victory-title">LASER LOCKDOWN COMPLETE</h3>
+              <p class="victory-sub">Security bypassed. VELOCITY's final subsystem is accessible.</p>
+
+              <div class="vault-code-plaque">
+                <div class="code-lbl">VAULT AUTHORIZATION CODE</div>
+                <div class="code-digits">----</div>
+              </div>
+
+              <div class="exec-instruction-text active" id="laserExecBoxB" style="display: block; margin: 0.75rem 0;">
+                Show this success screen to the event executive to collect the physical key for Vault 04.
+              </div>
+
+              <div>
+                <button class="btn-continue-exec" onclick="continueFromVault(4)">
+                  CONTINUE &rarr;
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls & Legend Strip -->
+          <div class="laser-footer-controls">
+            <div class="laser-legend-strip">
+              <span>🎮 W/A/S/D or Arrows to Move</span>
+              <span>💾 Chip</span>
+              <span>⚡ Lasers</span>
+              <span>🏁 Extraction</span>
+            </div>
+
+            <!-- Mini D-pad for touch / mouse navigation -->
+            <div class="laser-dpad-mini">
+              <button class="btn-dpad-mini" onclick="laserGameB && laserGameB.step('UP')" title="Move Up">▲</button>
+              <button class="btn-dpad-mini" onclick="laserGameB && laserGameB.step('LEFT')" title="Move Left">◀</button>
+              <button class="btn-dpad-mini" onclick="laserGameB && laserGameB.step('DOWN')" title="Move Down">▼</button>
+              <button class="btn-dpad-mini" onclick="laserGameB && laserGameB.step('RIGHT')" title="Move Right">▶</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Passcode Entry Modal: 6-Digit Physical Passcode Clearance -->
+  <div class="passcode-modal-overlay" id="passcodeModal">
+    <div class="passcode-modal-window" style="border-color: var(--accent-teamB); box-shadow: 0 0 70px rgba(0, 0, 0, 0.95), 0 0 35px rgba(255, 85, 0, 0.35);">
+      <!-- Topbar -->
+      <div class="passcode-topbar">
+        <div class="passcode-header-tag" style="color: var(--accent-teamB);">
+          <span class="blink-led" style="background: var(--accent-teamB); box-shadow: 0 0 8px var(--accent-teamB);"></span>
+          PHYSICAL SECURITY CLEARANCE // CODE REQUIRED
+        </div>
+        <button class="game-close-btn" id="passcodeCloseBtn">&times;</button>
+      </div>
+
+      <div class="passcode-content">
+        <div class="passcode-shield-icon" style="border-color: var(--accent-teamB); background: rgba(255, 85, 0, 0.1);">🔐</div>
+        <h3 class="passcode-title" id="passcodeVaultTitle">VAULT SECURITY LOCK</h3>
+        <p class="passcode-subline" id="passcodeVaultSub">
+          Enter the 6-digit authorization passcode obtained from physical vault to unlock this system.
+        </p>
+
+        <!-- 6 PIN Digit Input Boxes -->
+        <div class="pin-input-container" id="pinContainer">
+          <input type="text" inputmode="numeric" maxlength="1" class="pin-digit-box" id="pinDigit_0" autocomplete="off">
+          <input type="text" inputmode="numeric" maxlength="1" class="pin-digit-box" id="pinDigit_1" autocomplete="off">
+          <input type="text" inputmode="numeric" maxlength="1" class="pin-digit-box" id="pinDigit_2" autocomplete="off">
+          <input type="text" inputmode="numeric" maxlength="1" class="pin-digit-box" id="pinDigit_3" autocomplete="off">
+          <input type="text" inputmode="numeric" maxlength="1" class="pin-digit-box" id="pinDigit_4" autocomplete="off">
+          <input type="text" inputmode="numeric" maxlength="1" class="pin-digit-box" id="pinDigit_5" autocomplete="off">
+        </div>
+
+        <!-- Feedback message area -->
+        <div class="passcode-feedback" id="passcodeFeedback"></div>
+
+        <!-- On-Screen Cyber Numpad (for mouse & touch devices) -->
+        <div class="cyber-numpad">
+          <button type="button" class="btn-num-key" data-key="1">1</button>
+          <button type="button" class="btn-num-key" data-key="2">2</button>
+          <button type="button" class="btn-num-key" data-key="3">3</button>
+          <button type="button" class="btn-num-key" data-key="4">4</button>
+          <button type="button" class="btn-num-key" data-key="5">5</button>
+          <button type="button" class="btn-num-key" data-key="6">6</button>
+          <button type="button" class="btn-num-key" data-key="7">7</button>
+          <button type="button" class="btn-num-key" data-key="8">8</button>
+          <button type="button" class="btn-num-key" data-key="9">9</button>
+          <button type="button" class="btn-num-key action-key" data-key="clear">CLR</button>
+          <button type="button" class="btn-num-key" data-key="0">0</button>
+          <button type="button" class="btn-num-key action-key" data-key="backspace">⌫</button>
+        </div>
+
+        <!-- Actions -->
+        <div class="passcode-actions">
+          <button type="button" class="btn-verify-passcode" id="passcodeVerifyBtn" style="background: var(--accent-teamB); border-color: var(--accent-teamB); box-shadow: 0 0 20px rgba(255, 85, 0, 0.4);">
+            UNLOCK VAULT 🔓
+          </button>
+          <button type="button" class="btn-cancel-passcode" id="passcodeCancelBtn">
+            CANCEL
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Executive Master Reset Modal (Protected by Password: iste69) -->
+  <div class="admin-reset-overlay" id="adminResetModal">
+    <div class="admin-reset-window">
+      <!-- Topbar -->
+      <div class="admin-reset-topbar">
+        <div class="admin-reset-header-tag">
+          <span class="blink-led" style="background: #ef4444; box-shadow: 0 0 8px #ef4444;"></span>
+          SECURITY CLEARANCE LEVEL 05 // SYSTEM RESET
+        </div>
+        <button class="game-close-btn" id="adminResetCloseBtn" onclick="vaultSecurity && vaultSecurity.closeAdminResetModal()">&times;</button>
+      </div>
+
+      <div class="admin-reset-content">
+        <div class="admin-hazard-badge">⚠️</div>
+        <h3 class="admin-reset-title">EXECUTIVE MASTER RESET</h3>
+        <p class="admin-reset-sub">
+          Enter the master organizer password to purge stored progress and reset all vault levels back to default factory locks.
+        </p>
+
+        <!-- Password input -->
+        <div class="admin-pwd-input-wrap">
+          <input type="password" class="admin-pwd-input" id="adminPasswordInput" placeholder="ENTER PASSWORD" autocomplete="off">
+        </div>
+
+        <!-- Feedback message -->
+        <div class="admin-reset-feedback" id="adminResetFeedback"></div>
+
+        <!-- Action buttons -->
+        <div class="admin-reset-actions">
+          <button type="button" class="btn-admin-purge" id="adminResetConfirmBtn" onclick="vaultSecurity && vaultSecurity.executeAdminReset()">
+            PURGE &amp; RESET ↺
+          </button>
+          <button type="button" class="btn-admin-cancel" id="adminResetCancelBtn" onclick="vaultSecurity && vaultSecurity.closeAdminResetModal()">
+            CANCEL
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Standard Modal for other vaults -->
+  <div class="vault-modal-overlay" id="vaultModal">
+    <div class="vault-modal-box" style="border-color: var(--accent-teamB);">
+      <button class="modal-close-btn" onclick="closeVaultModal()">&times;</button>
+      <span style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--text-dim);" id="modalVaultCode">SYS-01</span>
+      <h3 style="font-family: var(--font-display); font-size: 1.6rem; margin: 0.5rem 0 1rem; color: #fff;" id="modalVaultTitle">Vault Name</h3>
+      <p style="font-family: var(--font-body); font-size: 1.1rem; color: #94a3b8; line-height: 1.5; margin-bottom: 1.5rem;" id="modalVaultDesc">Description</p>
+      
+      <div style="display: flex; gap: 1rem;">
+        <button class="vault-inspect-btn" id="modalDecipherBtn" style="background: var(--accent-teamB); color: #000;" onclick="attemptDecipher()">
+          UNLOCK VAULT
+        </button>
+        <button class="vault-inspect-btn" onclick="closeVaultModal()">
+          CLOSE
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/audio.js"></script>
+  <script src="../js/fluid_puzzle.js"></script>
+  <script src="../js/nav_game.js"></script>
+  <script src="../js/blueprint_game.js"></script>
+  <script src="../js/laser_game.js"></script>
+  <script src="../js/vault_security.js"></script>
+  <script>
+    let activeVaultId = null;
+
+    function continueFromVault(id) {
+      if (id === 1) closePowerGridGameB();
+      else if (id === 2) closeNavGameB();
+      else if (id === 3) closeBlueprintGameB();
+      else if (id === 4) closeLaserGameB();
+
+      if (window.vaultSecurity) {
+        window.vaultSecurity.completeVault(id);
+      }
+    }
+
+    // ==========================================
+    // MINI-GAME: WHERE'S MY WATER FLUID CARVING (TEAM B)
+    // ==========================================
+    let puzzleB = null;
+
+    function openPowerGridGameB() {
+      document.getElementById('powerGridModalB').classList.add('active');
+      if (window.soundEngine) window.soundEngine.playClick();
+      
+      if (!puzzleB) {
+        puzzleB = new FluidPuzzle({
+          canvasId: 'waterCanvasB',
+          team: 'B',
+          accentColor: '#ff5500',
+          targetFill: 24,
+          onWin: () => {
+            const statusBadge = document.getElementById('statusBadgeB');
+            statusBadge.className = 'status-indicator-badge on';
+            statusBadge.innerHTML = '<span class="status-dot"></span> POWER RESTORED';
+
+            document.getElementById('successBoxB').classList.add('active');
+            document.getElementById('continueBtnB').style.display = 'inline-flex';
+            document.getElementById('promptOverlayB').style.display = 'none';
+
+            // Update Vault 1 on main board
+            decryptedState[1] = true;
+            const card1 = document.getElementById('vaultCard1');
+            const tag1 = document.getElementById('tagVault1');
+            if (card1) card1.classList.add('decrypted');
+            if (tag1) tag1.textContent = 'UNLOCKED';
+
+            const count = Object.values(decryptedState).filter(Boolean).length;
+            document.getElementById('vaultCounterText').textContent = `STATUS: ${count} / 4 UNLOCKED`;
+
+            if (window.soundEngine) {
+              window.soundEngine.playVaultDecrypted();
+              setTimeout(() => window.soundEngine.playEngineRev(), 350);
+            }
+          }
+        });
+      }
+    }
+
+    function closePowerGridGameB() {
+      document.getElementById('powerGridModalB').classList.remove('active');
+      if (window.soundEngine) window.soundEngine.playClick();
+    }
+
+    function resetFluidPuzzleB() {
+      if (puzzleB) puzzleB.reset();
+      const statusBadge = document.getElementById('statusBadgeB');
+      statusBadge.className = 'status-indicator-badge off';
+      statusBadge.innerHTML = '<span class="status-dot"></span> MOTOR OFF';
+      const rpmText = document.getElementById('rpmTextB');
+      if (rpmText) rpmText.textContent = '0 RPM';
+      document.getElementById('successBoxB').classList.remove('active');
+      document.getElementById('continueBtnB').style.display = 'none';
+      document.getElementById('instructionsBoxB').classList.remove('active');
+      document.getElementById('promptOverlayB').style.display = 'flex';
+      if (window.soundEngine) window.soundEngine.playClick();
+    }
+
+    function showNextInstructionsB() {
+      document.getElementById('instructionsBoxB').classList.add('active');
+      if (window.soundEngine) window.soundEngine.playClick();
+    }
+
+    // ==========================================
+    // MINI-GAME: AUTONOMOUS NAVIGATION (TEAM B - VAULT 2)
+    // ==========================================
+    let navGameB = null;
+
+    function openNavGameB() {
+      document.getElementById('navGameModalB').classList.add('active');
+      if (window.soundEngine) window.soundEngine.playClick();
+
+      if (!navGameB) {
+        navGameB = new NavGame({
+          team: 'B',
+          startPos: { x: 1, y: 0 },
+          goalPos: { x: 4, y: 2 },
+          obstacles: [
+            { x: 1, y: 1 },
+            { x: 2, y: 1 },
+            { x: 3, y: 1 },
+            { x: 4, y: 3 }
+          ],
+          boardId: 'mazeBoardB',
+          statusBadgeId: 'navStatusBadgeB',
+          coordTextId: 'navCoordTextB',
+          moveCountId: 'navMoveCountB',
+          seqListId: 'seqListB',
+          alertBannerId: 'navAlertB',
+          successBoxId: 'navSuccessB',
+          runBtnId: 'btnRunB',
+          undoBtnId: 'btnUndoB',
+          clearBtnId: 'btnClearB',
+          resetBtnId: 'btnResetB',
+          dpadPrefix: 'dpadB_',
+          onWin: () => {
+            decryptedState[2] = true;
+            const card2 = document.getElementById('vaultCard2');
+            const tag2 = document.getElementById('tagVault2');
+            if (card2) card2.classList.add('decrypted');
+            if (tag2) tag2.textContent = 'UNLOCKED';
+
+            const count = Object.values(decryptedState).filter(Boolean).length;
+            document.getElementById('vaultCounterText').textContent = `STATUS: ${count} / 4 UNLOCKED`;
+          }
+        });
+      }
+    }
+
+    function closeNavGameB() {
+      document.getElementById('navGameModalB').classList.remove('active');
+      if (window.soundEngine) window.soundEngine.playClick();
+    }
+
+    function showNavKeyInstructionB() {
+      document.getElementById('navInstructionsB').classList.add('active');
+      if (window.soundEngine) window.soundEngine.playClick();
+    }
+
+    // ==========================================
+    // MINI-GAME: BLUEPRINT RECOVERY (TEAM B - VAULT 3)
+    // ==========================================
+    let blueprintGameB = null;
+
+    function openBlueprintGameB() {
+      document.getElementById('blueprintModalB').classList.add('active');
+      if (window.soundEngine) window.soundEngine.playClick();
+
+      if (!blueprintGameB) {
+        blueprintGameB = new BlueprintGame({
+          team: 'B',
+          containerId: 'bpGameB',
+          timerElemId: 'bpTimerB',
+          errorToastId: 'bpErrorToastB',
+          successCardId: 'bpSuccessB',
+          timeoutBoxId: 'bpTimeoutB',
+          digitPrefix: 'bpDigitB_',
+          slots: [
+            { id: 'slot-1', requiredPart: 'axle', name: 'REAR TRANSAXLE SHAFT', icon: '🔩', num: '01' },
+            { id: 'slot-2', requiredPart: 'motor-mount', name: 'CHASSIS MOTOR MOUNT', icon: '🛠️', num: '02' },
+            { id: 'slot-3', requiredPart: 'spring', name: 'HYDRAULIC SUSPENSION SPRING', icon: '🌀', num: '03' },
+            { id: 'slot-4', requiredPart: 'brake-disc', name: 'VENTILATED BRAKE DISC', icon: '💿', num: '04' }
+          ],
+          onWin: () => {
+            decryptedState[3] = true;
+            const card3 = document.getElementById('vaultCard3');
+            const tag3 = document.getElementById('tagVault3');
+            if (card3) card3.classList.add('decrypted');
+            if (tag3) tag3.textContent = 'UNLOCKED';
+
+            const count = Object.values(decryptedState).filter(Boolean).length;
+            document.getElementById('vaultCounterText').textContent = `STATUS: ${count} / 4 UNLOCKED`;
+          }
+        });
+      } else {
+        blueprintGameB.reset(true);
+      }
+    }
+
+    function closeBlueprintGameB() {
+      if (blueprintGameB) blueprintGameB.stopTimer();
+      document.getElementById('blueprintModalB').classList.remove('active');
+      if (window.soundEngine) window.soundEngine.playClick();
+    }
+
+    function showBpExecInstructionB() {
+      document.getElementById('bpExecBoxB').classList.add('active');
+      if (window.soundEngine) window.soundEngine.playClick();
+    }
+
+    // ==========================================
+    // MINI-GAME: LASER LOCKDOWN (TEAM B - VAULT 4)
+    // ==========================================
+    let laserGameB = null;
+
+    function openLaserGameB() {
+      document.getElementById('laserModalB').classList.add('active');
+      if (window.soundEngine) window.soundEngine.playClick();
+
+      if (!laserGameB) {
+        laserGameB = new LaserLockdownGame({
+          team: 'B',
+          canvasId: 'laserCanvasB',
+          timerElemId: 'laserTimerB',
+          chipPillId: 'laserChipB',
+          statusPillId: 'laserStatusB',
+          briefingModalId: 'laserBriefingB',
+          failedModalId: 'laserFailedB',
+          victoryModalId: 'laserVictoryB',
+          flashOverlayId: 'laserFlashB',
+          onWin: () => {
+            decryptedState[4] = true;
+            const card4 = document.getElementById('vaultCard4');
+            const tag4 = document.getElementById('tagVault4');
+            if (card4) card4.classList.add('decrypted');
+            if (tag4) tag4.textContent = 'UNLOCKED';
+
+            const count = Object.values(decryptedState).filter(Boolean).length;
+            document.getElementById('vaultCounterText').textContent = `STATUS: ${count} / 4 UNLOCKED`;
+          }
+        });
+      } else {
+        laserGameB.reset();
+      }
+    }
+
+    function closeLaserGameB() {
+      if (laserGameB) {
+        laserGameB.isPaused = true;
+      }
+      document.getElementById('laserModalB').classList.remove('active');
+      if (window.soundEngine) window.soundEngine.playClick();
+    }
+
+    function showLaserExecInstructionB() {
+      const box = document.getElementById('laserExecBoxB');
+      if (box) box.classList.add('active');
+      if (window.soundEngine) window.soundEngine.playClick();
+    }
+
+    // Standard Vault Handling
+
+    function openVaultModal(id, title, desc) {
+      activeVaultId = id;
+      document.getElementById('modalVaultCode').textContent = `SYS-0${id} // ENCRYPTED VAULT`;
+      document.getElementById('modalVaultTitle').textContent = title;
+      document.getElementById('modalVaultDesc').textContent = desc;
+
+      const decipherBtn = document.getElementById('modalDecipherBtn');
+      if (decryptedState[id]) {
+        decipherBtn.textContent = 'ALREADY UNLOCKED';
+        decipherBtn.disabled = true;
+        decipherBtn.style.opacity = 0.5;
+      } else {
+        decipherBtn.textContent = 'UNLOCK VAULT';
+        decipherBtn.disabled = false;
+        decipherBtn.style.opacity = 1;
+      }
+
+      document.getElementById('vaultModal').classList.add('active');
+      window.soundEngine.playClick();
+    }
+
+    function closeVaultModal() {
+      document.getElementById('vaultModal').classList.remove('active');
+      window.soundEngine.playClick();
+    }
+
+    function attemptDecipher() {
+      if (!activeVaultId || decryptedState[activeVaultId]) return;
+      decryptedState[activeVaultId] = true;
+      
+      const card = document.getElementById(`vaultCard${activeVaultId}`);
+      const tag = document.getElementById(`tagVault${activeVaultId}`);
+      if (card) card.classList.add('decrypted');
+      if (tag) tag.textContent = 'UNLOCKED';
+
+      const count = Object.values(decryptedState).filter(Boolean).length;
+      document.getElementById('vaultCounterText').textContent = `STATUS: ${count} / 4 UNLOCKED`;
+
+      window.soundEngine.playVaultDecrypted();
+      closeVaultModal();
+    }
+
+    // Audio toggler
+    const audioBtn = document.getElementById('audioToggleBtn');
+    const audioIcon = document.getElementById('audioStatusIcon');
+    if (audioBtn) {
+      audioBtn.addEventListener('click', () => {
+        const enabled = window.soundEngine.toggle();
+        audioIcon.textContent = enabled ? '🔊' : '🔇';
+        if (enabled) window.soundEngine.playClick();
+      });
+    }
+
+    // Fullscreen Toggler
+    const fsBtn = document.getElementById('fsToggleBtn');
+    function toggleFullscreen() {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        const root = document.documentElement;
+        if (root.requestFullscreen) root.requestFullscreen();
+        else if (root.webkitRequestFullscreen) root.webkitRequestFullscreen();
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+      }
+      if (window.soundEngine) window.soundEngine.playClick();
+    }
+    function updateFsBtn() {
+      const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+      if (fsBtn) {
+        fsBtn.innerHTML = isFs ? '<span>🗗</span> EXIT FULLSCREEN' : '<span>⛶</span> FULLSCREEN';
+      }
+    }
+    if (fsBtn) {
+      fsBtn.addEventListener('click', toggleFullscreen);
+      document.addEventListener('fullscreenchange', updateFsBtn);
+      document.addEventListener('webkitfullscreenchange', updateFsBtn);
+    }
+
+    // Initialize Vault Security & Passcode Manager (Team B)
+    window.vaultSecurity = new VaultSecurityController({
+      team: 'B',
+      launchers: {
+        1: openPowerGridGameB,
+        2: openNavGameB,
+        3: openBlueprintGameB,
+        4: openLaserGameB
+      }
+    });
+  </script>
+</body>
+</html>

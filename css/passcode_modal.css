@@ -1,0 +1,620 @@
+/* ========================================================
+   VAULT PASSCODE ENTRY MODAL & STATE STYLING
+   6-Digit Physical Security Passcode Clearance System
+   ======================================================== */
+
+/* Passcode Modal Overlay */
+.passcode-modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 5, 10, 0.94);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 2500;
+  padding: 1rem;
+  align-items: center;
+  justify-content: center;
+  animation: passFadeIn 0.2s ease-out;
+}
+
+.passcode-modal-overlay.active {
+  display: flex;
+}
+
+@keyframes passFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Modal Window */
+.passcode-modal-window {
+  background: #080d16;
+  border: 2px solid var(--team-accent, #00d2ff);
+  box-shadow: 0 0 70px rgba(0, 0, 0, 0.95), 0 0 35px var(--team-glow, rgba(0, 210, 255, 0.35));
+  border-radius: 8px;
+  max-width: 520px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Window Topbar */
+.passcode-topbar {
+  background: #04070e;
+  border-bottom: 2px solid var(--border-metal, #222d3d);
+  padding: 0.65rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8rem;
+}
+
+.passcode-header-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: var(--team-accent, #00d2ff);
+  font-weight: 700;
+  letter-spacing: 0.15em;
+}
+
+/* Modal Content */
+.passcode-content {
+  padding: 1.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.passcode-shield-icon {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(245, 158, 11, 0.1);
+  border: 1px solid var(--hazard-yellow, #f59e0b);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 0 25px rgba(245, 158, 11, 0.25);
+  animation: pulseShield 2s infinite ease-in-out;
+}
+
+@keyframes pulseShield {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(245, 158, 11, 0.25); }
+  50% { transform: scale(1.05); box-shadow: 0 0 35px rgba(245, 158, 11, 0.45); }
+}
+
+.passcode-title {
+  font-family: var(--font-display, sans-serif);
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: #fff;
+  text-transform: uppercase;
+  margin: 0 0 0.4rem;
+}
+
+.passcode-subline {
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.95rem;
+  color: #94a3b8;
+  max-width: 420px;
+  line-height: 1.45;
+  margin: 0 0 1.5rem;
+}
+
+.passcode-subline strong {
+  color: #f1f5f9;
+}
+
+/* 6-Digit PIN Boxes */
+.pin-input-container {
+  display: flex;
+  gap: 0.6rem;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.pin-digit-box {
+  width: 48px;
+  height: 58px;
+  background: #0d1420;
+  border: 2px solid #233348;
+  border-radius: 6px;
+  color: #fff;
+  font-family: var(--font-mono, monospace);
+  font-size: 1.8rem;
+  font-weight: 900;
+  text-align: center;
+  outline: none;
+  transition: all 0.2s;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+  caret-color: var(--team-accent, #00d2ff);
+}
+
+.pin-digit-box:focus {
+  border-color: var(--team-accent, #00d2ff);
+  box-shadow: 0 0 18px var(--team-glow, rgba(0, 210, 255, 0.4));
+  background: #111a28;
+}
+
+.pin-digit-box.filled {
+  border-color: rgba(255, 255, 255, 0.4);
+  background: #131c2b;
+}
+
+/* Shake Animation for Incorrect Passcode */
+.pin-input-container.shake {
+  animation: pinShake 0.45s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes pinShake {
+  10%, 90% { transform: translate3d(-3px, 0, 0); }
+  20%, 80% { transform: translate3d(5px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+  40%, 60% { transform: translate3d(6px, 0, 0); }
+}
+
+/* Feedback Messages */
+.passcode-feedback {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  min-height: 24px;
+  margin-bottom: 1.25rem;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.passcode-feedback.error {
+  color: #ef4444;
+  text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+.passcode-feedback.success {
+  color: #10b981;
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+/* Action Buttons */
+.passcode-actions {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.btn-verify-passcode {
+  background: var(--team-accent, #00d2ff);
+  color: #000;
+  border: 1px solid var(--team-accent, #00d2ff);
+  box-shadow: 0 0 20px var(--team-glow, rgba(0, 210, 255, 0.4));
+  font-family: var(--font-display, sans-serif);
+  font-weight: 900;
+  font-size: 0.95rem;
+  letter-spacing: 0.1em;
+  padding: 0.75rem 1.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  flex: 1;
+  max-width: 220px;
+}
+
+.btn-verify-passcode:hover {
+  filter: brightness(1.15);
+  transform: translateY(-2px);
+}
+
+.btn-cancel-passcode {
+  background: #111827;
+  color: #94a3b8;
+  border: 1px solid var(--border-metal, #222d3d);
+  font-family: var(--font-display, sans-serif);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  padding: 0.75rem 1.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+
+.btn-cancel-passcode:hover {
+  background: #1e293b;
+  color: #f1f5f9;
+}
+
+/* On-screen Cyber Numeric Keypad */
+.cyber-numpad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.45rem;
+  width: 100%;
+  max-width: 280px;
+  margin-top: 1.25rem;
+  margin-bottom: 0.75rem;
+}
+
+.btn-num-key {
+  background: #111827;
+  border: 1px solid #1e293b;
+  color: #e2e8f0;
+  font-family: var(--font-mono, monospace);
+  font-size: 1.15rem;
+  font-weight: 700;
+  padding: 0.65rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+}
+
+.btn-num-key:hover {
+  background: #1e293b;
+  color: var(--team-accent, #00d2ff);
+  border-color: var(--team-accent, #00d2ff);
+}
+
+.btn-num-key:active {
+  transform: scale(0.95);
+  background: var(--team-accent, #00d2ff);
+  color: #000;
+}
+
+.btn-num-key.action-key {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+/* Top Progress / Objective Banner */
+.mission-progress-strip {
+  background: #090e18;
+  border: 1px solid var(--border-metal, #222d3d);
+  border-left: 4px solid var(--team-accent, #00d2ff);
+  padding: 0.85rem 1.25rem;
+  margin-bottom: 1.5rem;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.82rem;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.progress-directive-text {
+  color: #cbd5e1;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.progress-directive-text strong {
+  color: var(--team-accent, #00d2ff);
+}
+
+/* Card State Overrides */
+.vault-card-box.locked {
+  border-color: #1f2a3a;
+  background: #080c14;
+  opacity: 0.9;
+}
+
+.vault-card-box.locked .vault-status-indicator {
+  border-color: #ef4444;
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.12);
+}
+
+.vault-card-box.locked .vault-inspect-btn {
+  background: #111926;
+  color: #f59e0b;
+  border: 1px solid #334155;
+  box-shadow: none;
+}
+
+.vault-card-box.locked .vault-inspect-btn:hover {
+  background: #f59e0b;
+  color: #000;
+  border-color: #f59e0b;
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.4);
+}
+
+.vault-card-box.unlocked {
+  border-color: var(--team-accent, #00d2ff);
+  box-shadow: 0 0 25px var(--team-glow, rgba(0, 210, 255, 0.25));
+}
+
+.vault-card-box.unlocked .vault-status-indicator {
+  border-color: var(--team-accent, #00d2ff);
+  color: var(--team-accent, #00d2ff);
+  background: rgba(0, 210, 255, 0.12);
+}
+
+.vault-card-box.completed {
+  border-color: #10b981;
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.25);
+}
+
+.vault-card-box.completed::before {
+  background: #10b981 !important;
+}
+
+.vault-card-box.completed .vault-status-indicator {
+  border-color: #10b981;
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.15);
+}
+
+.vault-card-box.completed .vault-inspect-btn {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border-color: #10b981;
+}
+
+.vault-card-box.completed .vault-inspect-btn:hover {
+  background: #10b981;
+  color: #000;
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+}
+
+/* Grand Victory Toast / Celebration */
+.grand-victory-banner {
+  display: none;
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.2));
+  border: 2px solid #10b981;
+  box-shadow: 0 0 45px rgba(16, 185, 129, 0.4);
+  padding: 1.25rem 1.75rem;
+  border-radius: 6px;
+  margin-bottom: 2rem;
+  text-align: center;
+  animation: grandPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.grand-victory-banner.active {
+  display: block;
+}
+
+@keyframes grandPop {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.grand-vic-title {
+  font-family: var(--font-display, sans-serif);
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: #10b981;
+  letter-spacing: 0.1em;
+  margin: 0 0 0.4rem;
+}
+
+.grand-vic-sub {
+  font-family: var(--font-body, sans-serif);
+  font-size: 1.1rem;
+  color: #cbd5e1;
+  margin: 0;
+}
+
+/* ========================================================
+   EXECUTIVE MASTER RESET MODAL (Password Protected: iste69)
+   ======================================================== */
+
+.admin-reset-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(3, 4, 8, 0.95);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 3000;
+  padding: 1rem;
+  align-items: center;
+  justify-content: center;
+  animation: passFadeIn 0.2s ease-out;
+}
+
+.admin-reset-overlay.active {
+  display: flex;
+}
+
+.admin-reset-window {
+  background: #090a10;
+  border: 2px solid #ef4444;
+  box-shadow: 0 0 70px rgba(0, 0, 0, 0.95), 0 0 35px rgba(239, 68, 68, 0.35);
+  border-radius: 8px;
+  max-width: 480px;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-reset-topbar {
+  background: #070406;
+  border-bottom: 2px solid #231215;
+  padding: 0.65rem 1.25rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8rem;
+}
+
+.admin-reset-header-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  color: #ef4444;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+}
+
+.admin-reset-content {
+  padding: 1.75rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.admin-hazard-badge {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid #ef4444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.3);
+  animation: pulseShield 1.5s infinite ease-in-out;
+}
+
+.admin-reset-title {
+  font-family: var(--font-display, sans-serif);
+  font-size: 1.5rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  color: #fff;
+  text-transform: uppercase;
+  margin: 0 0 0.4rem;
+}
+
+.admin-reset-sub {
+  font-family: var(--font-body, sans-serif);
+  font-size: 0.95rem;
+  color: #94a3b8;
+  max-width: 400px;
+  line-height: 1.45;
+  margin: 0 0 1.25rem;
+}
+
+.admin-pwd-input-wrap {
+  width: 100%;
+  max-width: 320px;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.admin-pwd-input {
+  width: 100%;
+  background: #0f131a;
+  border: 2px solid #283344;
+  border-radius: 6px;
+  padding: 0.85rem 1rem;
+  color: #fff;
+  font-family: var(--font-mono, monospace);
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-align: center;
+  outline: none;
+  letter-spacing: 0.15em;
+  transition: all 0.2s;
+  box-sizing: border-box;
+}
+
+.admin-pwd-input:focus {
+  border-color: #ef4444;
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.4);
+  background: #141722;
+}
+
+.admin-reset-options {
+  display: flex;
+  gap: 1.2rem;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+  font-family: var(--font-mono, monospace);
+  font-size: 0.8rem;
+  color: #cbd5e1;
+}
+
+.admin-reset-options label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  cursor: pointer;
+}
+
+.admin-reset-feedback {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.85rem;
+  min-height: 24px;
+  margin-bottom: 1.25rem;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.admin-reset-feedback.error {
+  color: #ef4444;
+  text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+.admin-reset-feedback.success {
+  color: #10b981;
+  text-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.admin-reset-actions {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+  justify-content: center;
+}
+
+.btn-admin-purge {
+  background: #ef4444;
+  color: #fff;
+  border: 1px solid #ef4444;
+  box-shadow: 0 0 25px rgba(239, 68, 68, 0.5);
+  font-family: var(--font-display, sans-serif);
+  font-weight: 900;
+  font-size: 0.95rem;
+  letter-spacing: 0.1em;
+  padding: 0.75rem 1.6rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+  flex: 1;
+  max-width: 240px;
+}
+
+.btn-admin-purge:hover {
+  filter: brightness(1.15);
+  transform: translateY(-2px);
+}
+
+.btn-admin-cancel {
+  background: #111827;
+  color: #94a3b8;
+  border: 1px solid var(--border-metal, #222d3d);
+  font-family: var(--font-display, sans-serif);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  padding: 0.75rem 1.2rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+}
+
+.btn-admin-cancel:hover {
+  background: #1e293b;
+  color: #f1f5f9;
+}

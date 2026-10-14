@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OPERATION REBUILD // Project VELOCITY Access Terminal</title>
+  <meta name="description" content="Decipher, Discover, Build and Race. Two teams attempt to breach the 4 encrypted vaults of the legendary prototype vehicle VELOCITY.">
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/passcode_modal.css">
+</head>
+<body>
+
+  <!-- Top Caution Hazard Tape -->
+  <div class="hazard-tape"></div>
+
+  <!-- Facility Header -->
+  <header class="facility-topbar">
+    <div class="topbar-classified-stamp">
+      <span class="blink-led"></span>
+      RESTRICTED ACCESS // R&amp;D SECTOR-04
+    </div>
+
+    <div class="topbar-meta">
+      <span>SUBJECT: PROTOTYPE VELOCITY</span>
+      <span>STATUS: FACILITY REOPENED [T+2 YEARS]</span>
+      <button class="topbar-btn" id="audioToggleBtn" title="Toggle Sound FX">
+        <span id="audioStatusIcon">🔊</span> SOUND
+      </button>
+      <button class="topbar-btn" id="fsToggleBtn" title="Toggle Fullscreen">
+        <span id="fsIcon">⛶</span> FULLSCREEN
+      </button>
+      <button class="topbar-btn" id="adminResetBtn" title="Executive Reset All Levels" onclick="openAdminResetModal()">
+        <span>🔒</span> RESET GAME
+      </button>
+    </div>
+  </header>
+
+  <!-- Dossier & Vault Selection Container -->
+  <main class="dossier-container">
+    
+    <!-- Mission Header -->
+    <section class="dossier-briefing">
+      <span class="dossier-code">🏁 OPERATION REBUILD</span>
+      <h1 class="dossier-title">
+        PROJECT <span class="sub-tag">VELOCITY</span>
+      </h1>
+    </section>
+
+    <!-- JUST TWO BOXES: TEAM A & TEAM B VAULT DOORS -->
+    <section class="team-vaults-selection-area">
+      <div class="vaults-prompt-banner">
+        SELECT YOUR VAULT DIVISION // <span>TOUCH TO BREACH</span>
+      </div>
+
+      <div class="vault-doors-grid">
+        
+        <!-- TEAM A VAULT DOOR BOX -->
+        <a href="teamA/" class="vault-door-card vault-team-a" id="vaultDoorA">
+          <div class="vault-card-topband">
+            <span class="vault-access-code">VAULT UNIT // SET-01</span>
+            <div class="vault-lock-indicator">
+              <span class="lock-dot"></span> 4 ENCRYPTED SYSTEMS
+            </div>
+          </div>
+
+          <div class="vault-card-body">
+            <span class="vault-massive-number">SECTOR ALPHA // DIVISION 01</span>
+            <h2 class="vault-team-heading">TEAM <span>A</span></h2>
+            <div class="vault-dial-graphic">⚙️</div>
+            <p class="vault-subcaption">4 SEALED SYSTEM BLUEPRINTS READY</p>
+          </div>
+
+          <div class="vault-card-footer">
+            <span>BREACH VAULT DOOR &rarr;</span>
+            <span class="path-tag">/teamA</span>
+          </div>
+        </a>
+
+        <!-- TEAM B VAULT DOOR BOX -->
+        <a href="teamB/" class="vault-door-card vault-team-b" id="vaultDoorB">
+          <div class="vault-card-topband">
+            <span class="vault-access-code">VAULT UNIT // SET-02</span>
+            <div class="vault-lock-indicator">
+              <span class="lock-dot"></span> 4 ENCRYPTED SYSTEMS
+            </div>
+          </div>
+
+          <div class="vault-card-body">
+            <span class="vault-massive-number">SECTOR BETA // DIVISION 02</span>
+            <h2 class="vault-team-heading">TEAM <span>B</span></h2>
+            <div class="vault-dial-graphic">⚙️</div>
+            <p class="vault-subcaption">4 SEALED SYSTEM BLUEPRINTS READY</p>
+          </div>
+
+          <div class="vault-card-footer">
+            <span>BREACH VAULT DOOR &rarr;</span>
+            <span class="path-tag">/teamB</span>
+          </div>
+        </a>
+
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="facility-footer">
+      <div class="hazard-tape" style="height: 3px; margin-bottom: 1.5rem;"></div>
+      <div>CONFIDENTIAL EXPERIMENTAL MOTORSPORT ARCHIVE // AUTH CODE: VELOCITY-2YR</div>
+      <div>FACILITY TERMINAL FIRMWARE v4.2 // REOPENED FACILITY PROTOCOL</div>
+    </footer>
+
+  </main>
+
+  <script src="js/audio.js"></script>
+  <script>
+    // Audio toggler
+    const audioBtn = document.getElementById('audioToggleBtn');
+    const audioIcon = document.getElementById('audioStatusIcon');
+    if (audioBtn) {
+      audioBtn.addEventListener('click', () => {
+        const enabled = window.soundEngine.toggle();
+        audioIcon.textContent = enabled ? '🔊' : '🔇';
+        if (enabled) window.soundEngine.playClick();
+      });
+    }
+
+    // Fullscreen Toggler
+    const fsBtn = document.getElementById('fsToggleBtn');
+    const fsIcon = document.getElementById('fsIcon');
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+        const root = document.documentElement;
+        if (root.requestFullscreen) {
+          root.requestFullscreen();
+        } else if (root.webkitRequestFullscreen) {
+          root.webkitRequestFullscreen();
+        }
+      } else {
+        if (document.exitFullscreen) {
+          document.exitFullscreen();
+        } else if (document.webkitExitFullscreen) {
+          document.webkitExitFullscreen();
+        }
+      }
+      if (window.soundEngine) window.soundEngine.playClick();
+    }
+
+    function updateFsBtn() {
+      const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+      if (fsBtn) {
+        fsBtn.innerHTML = isFs ? '<span>🗗</span> EXIT FULLSCREEN' : '<span>⛶</span> FULLSCREEN';
+      }
+    }
+
+    if (fsBtn) {
+      fsBtn.addEventListener('click', toggleFullscreen);
+      document.addEventListener('fullscreenchange', updateFsBtn);
+      document.addEventListener('webkitfullscreenchange', updateFsBtn);
+    }
+
+    // Vault Door Sound Effects
+    const doorA = document.getElementById('vaultDoorA');
+    const doorB = document.getElementById('vaultDoorB');
+
+    [doorA, doorB].forEach(door => {
+      if (!door) return;
+      door.addEventListener('mouseenter', () => {
+        window.soundEngine.playHover();
+      });
+      door.addEventListener('click', () => {
+        window.soundEngine.playEngineRev();
+      });
+    });
+
+    // Executive Master Reset (Password: iste69)
+    function openAdminResetModal() {
+      const modal = document.getElementById('adminResetModal');
+      const pwdInput = document.getElementById('adminPasswordInput');
+      const feedback = document.getElementById('adminResetFeedback');
+      if (pwdInput) pwdInput.value = '';
+      if (feedback) {
+        feedback.textContent = '';
+        feedback.className = 'admin-reset-feedback';
+      }
+      if (modal) {
+        modal.classList.add('active');
+        setTimeout(() => {
+          if (pwdInput) pwdInput.focus();
+        }, 100);
+      }
+      if (window.soundEngine) window.soundEngine.playClick();
+    }
+
+    function closeAdminResetModal() {
+      const modal = document.getElementById('adminResetModal');
+      if (modal) modal.classList.remove('active');
+      if (window.soundEngine) window.soundEngine.playClick();
+    }
+
+    function executeAdminReset() {
+      const pwdInput = document.getElementById('adminPasswordInput');
+      const feedback = document.getElementById('adminResetFeedback');
+      const pwd = pwdInput ? pwdInput.value.trim() : '';
+
+      if (pwd === 'iste69') {
+        if (feedback) {
+          feedback.className = 'admin-reset-feedback success';
+          feedback.textContent = '✓ PASSWORD ACCEPTED // PURGING ALL VAULT DATA...';
+        }
+        if (window.soundEngine) window.soundEngine.playVaultDecrypted();
+
+        // Clear both teams from localStorage
+        localStorage.removeItem('op_rebuild_vault_states_A');
+        localStorage.removeItem('op_rebuild_vault_states_B');
+
+        setTimeout(() => {
+          closeAdminResetModal();
+          alert('ALL VAULTS & LEVELS HAVE BEEN RESET TO DEFAULT LOCKS (Vault 1 Ready, Vaults 2-4 Locked with 6-digit codes).');
+        }, 800);
+
+      } else {
+        if (feedback) {
+          feedback.className = 'admin-reset-feedback error';
+          feedback.textContent = '⚠️ ACCESS DENIED // INVALID ADMIN PASSWORD';
+        }
+        if (pwdInput) {
+          pwdInput.classList.add('shake');
+          setTimeout(() => pwdInput.classList.remove('shake'), 450);
+          pwdInput.value = '';
+          pwdInput.focus();
+        }
+        if (window.soundEngine) window.soundEngine.playLaserHit();
+      }
+    }
+
+    // Keyboard Enter listener for admin password input
+    document.addEventListener('DOMContentLoaded', () => {
+      const pwdInput = document.getElementById('adminPasswordInput');
+      if (pwdInput) {
+        pwdInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') executeAdminReset();
+        });
+      }
+    });
+  </script>
+
+  <!-- Executive Master Reset Modal (Protected by Password: iste69) -->
+  <div class="admin-reset-overlay" id="adminResetModal">
+    <div class="admin-reset-window">
+      <!-- Topbar -->
+      <div class="admin-reset-topbar">
+        <div class="admin-reset-header-tag">
+          <span class="blink-led" style="background: #ef4444; box-shadow: 0 0 8px #ef4444;"></span>
+          SECURITY CLEARANCE LEVEL 05 // SYSTEM RESET
+        </div>
+        <button class="game-close-btn" id="adminResetCloseBtn" onclick="closeAdminResetModal()">&times;</button>
+      </div>
+
+      <div class="admin-reset-content">
+        <div class="admin-hazard-badge">⚠️</div>
+        <h3 class="admin-reset-title">EXECUTIVE MASTER RESET</h3>
+        <p class="admin-reset-sub">
+          Enter the master organizer password to purge stored progress and reset all vault levels back to default factory locks.
+        </p>
+
+        <!-- Password input -->
+        <div class="admin-pwd-input-wrap">
+          <input type="password" class="admin-pwd-input" id="adminPasswordInput" placeholder="ENTER PASSWORD" autocomplete="off">
+        </div>
+
+        <!-- Feedback message -->
+        <div class="admin-reset-feedback" id="adminResetFeedback"></div>
+
+        <!-- Action buttons -->
+        <div class="admin-reset-actions">
+          <button type="button" class="btn-admin-purge" id="adminResetConfirmBtn" onclick="executeAdminReset()">
+            PURGE &amp; RESET ↺
+          </button>
+          <button type="button" class="btn-admin-cancel" id="adminResetCancelBtn" onclick="closeAdminResetModal()">
+            CANCEL
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
