@@ -1,0 +1,9 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/teamA", "destination": "/teamA/index.html" },
+    { "source": "/teamB", "destination": "/teamB/index.html" },
+    { "source": "/(.*)", "destination": "/$1" }
+  ]
+}
