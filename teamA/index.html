@@ -274,14 +274,14 @@
             <h2 class="nav-main-title">AUTONOMOUS NAVIGATION</h2>
           </div>
           <div class="nav-brief-badge">
-            <span>🤖</span> AVOID 3 HAZARD BLOCKS &bull; REACH DESTINATION
+            <span>🤖</span> 6×6 LABYRINTH &bull; COLLECT 💳 KEYCARD &bull; UNLOCK 🏁 EXIT GATE
           </div>
         </div>
 
         <!-- Mission Briefing Banner -->
         <div class="nav-mission-banner">
           <span style="font-size: 1.05rem;">🎯</span>
-          <span><strong>MISSION:</strong> Reach the finish without hitting a hazard.</span>
+          <span><strong>MISSION:</strong> 1. Route robot to retrieve the 💳 KEYCARD. 2. Navigate through hazards to breach the unlocked 🏁 EXIT GATE.</span>
         </div>
 
         <!-- Telemetry Status Strip -->
@@ -289,21 +289,22 @@
           <span class="nav-status-badge ready" id="navStatusBadgeA">
             <span>⚡</span> READY
           </span>
-          <span id="navCoordTextA" style="color: var(--accent-teamA); font-weight: 700;">[X: 0, Y: 3]</span>
+          <span id="navCoordTextA" style="color: var(--accent-teamA); font-weight: 700;">[X: 0, Y: 5] &bull; 💳 KEYCARD: REQUIRED</span>
           <span id="navMoveCountA" style="color: #cbd5e1;">MOVES: 0</span>
         </div>
 
-        <!-- Two-Column Arena: 5x5 Maze on Left, Sequence & Controls on Right -->
+        <!-- Two-Column Arena: 6x6 Maze on Left, Sequence & Controls on Right -->
         <div class="nav-arena-grid">
-          <!-- 5x5 Grid Maze -->
+          <!-- 6x6 Grid Maze -->
           <div class="maze-grid-wrapper">
             <div class="maze-5x5-board" id="mazeBoardA">
-              <!-- Dynamically populated with 25 tiles + smooth-gliding robot token -->
+              <!-- Dynamically populated with 36 tiles + smooth-gliding robot token -->
             </div>
             <div class="maze-legend-row">
               <span>🤖 ROBOT</span>
               <span style="color: #ef4444;">⚠️ HAZARD</span>
-              <span style="color: #10b981;">🏁 FINISH</span>
+              <span style="color: #f59e0b;">💳 KEYCARD</span>
+              <span style="color: #10b981;">🏁 EXIT GATE</span>
             </div>
           </div>
 
@@ -559,7 +560,7 @@
         <div class="laser-telemetry-strip">
           <div class="laser-timer-box">
             <span>⏱️</span>
-            <span id="laserTimerA">TIME: 01:15</span>
+            <span id="laserTimerA">TIME: 00:50</span>
           </div>
 
           <div class="laser-chip-pill" id="laserChipA">
@@ -584,10 +585,9 @@
               <div class="briefing-stamp">SECURITY BREACH // VAULT 04</div>
               <h3 class="briefing-title">MISSION BRIEFING</h3>
               <p class="briefing-text">
-                VELOCITY's final engineering blueprint is locked inside the facility's security system.<br><br>
-                A maintenance robot has been deployed to retrieve the authorization chip.<br><br>
-                Security lasers are active. The exit is sealed.<br><br>
-                Collect the access chip, navigate the laser network, and reach the extraction point before the security system locks down.
+                VELOCITY's final engineering blueprint is locked inside the facility's security vault.<br><br>
+                <strong>TACTICAL ALERT:</strong> High-density security grid engaged with 6 tactical beams, including sweeping patrol drones and an emergency post-chip lockdown perimeter.<br><br>
+                Retrieve the access chip and reach the extraction point before the 50-second lockdown timer expires!
               </p>
               <button class="btn-start-mission" onclick="laserGameA && laserGameA.startMission()">
                 START MISSION ▶
@@ -871,12 +871,19 @@
       if (!navGameA) {
         navGameA = new NavGame({
           team: 'A',
-          startPos: { x: 0, y: 3 },
-          goalPos: { x: 3, y: 1 },
+          gridSize: 6,
+          startPos: { x: 0, y: 5 },
+          keycardPos: { x: 5, y: 1 },
+          goalPos: { x: 0, y: 0 },
           obstacles: [
-            { x: 1, y: 3 },
+            { x: 0, y: 4 },
+            { x: 1, y: 2 },
+            { x: 2, y: 4 },
             { x: 2, y: 2 },
-            { x: 3, y: 3 }
+            { x: 3, y: 2 },
+            { x: 4, y: 4 },
+            { x: 3, y: 0 },
+            { x: 1, y: 0 }
           ],
           boardId: 'mazeBoardA',
           statusBadgeId: 'navStatusBadgeA',
@@ -971,6 +978,7 @@
       if (!laserGameA) {
         laserGameA = new LaserLockdownGame({
           team: 'A',
+          timeLimit: 50,
           canvasId: 'laserCanvasA',
           timerElemId: 'laserTimerA',
           chipPillId: 'laserChipA',

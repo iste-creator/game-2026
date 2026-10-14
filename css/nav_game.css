@@ -211,9 +211,9 @@
 
 .maze-5x5-board {
   display: grid;
-  grid-template-columns: repeat(5, 72px);
-  grid-template-rows: repeat(5, 72px);
-  gap: 8px;
+  grid-template-columns: repeat(6, 56px);
+  grid-template-rows: repeat(6, 56px);
+  gap: 6px;
   position: relative;
   background: #04070c;
   padding: 8px;
@@ -245,6 +245,49 @@
   border-color: var(--team-accent, #00d2ff);
   background: radial-gradient(circle at center, rgba(0, 210, 255, 0.16) 0%, #0d1420 70%);
   box-shadow: 0 0 18px var(--team-glow, rgba(0, 210, 255, 0.35)), inset 0 0 12px var(--team-glow, rgba(0, 210, 255, 0.2));
+}
+
+/* Encryption Keycard Pickup Tile */
+.maze-tile.keycard {
+  border-color: #f59e0b;
+  background: radial-gradient(circle at center, rgba(245, 158, 11, 0.22) 0%, #0d1420 75%);
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.35);
+  animation: keycardPulse 1.8s infinite ease-in-out;
+}
+
+@keyframes keycardPulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(245, 158, 11, 0.3); border-color: #f59e0b; }
+  50% { box-shadow: 0 0 24px rgba(245, 158, 11, 0.65); border-color: #fbbf24; }
+}
+
+.keycard-badge-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+
+.keycard-icon {
+  font-size: 1.25rem;
+  filter: drop-shadow(0 0 6px #f59e0b);
+}
+
+.keycard-subtext {
+  font-family: var(--font-mono, monospace);
+  font-size: 0.55rem;
+  font-weight: 700;
+  color: #fbbf24;
+  letter-spacing: 0.05em;
+  line-height: 1;
+}
+
+.maze-tile.keycard.collected {
+  opacity: 0.3;
+  filter: grayscale(1);
+  animation: none;
+  box-shadow: none;
+  border-color: #263342;
 }
 
 /* Restrained red warning animation on hazards */
@@ -283,8 +326,8 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 32px;
-  height: 32px;
+  width: 26px;
+  height: 26px;
   background: rgba(14, 28, 44, 0.92);
   border: 1.5px solid var(--team-accent, #00d2ff);
   box-shadow: 0 0 12px var(--team-glow, rgba(0, 210, 255, 0.5));
@@ -300,14 +343,14 @@
 
 .projected-marker .proj-step-num {
   font-family: var(--font-mono, monospace);
-  font-size: 0.65rem;
+  font-size: 0.6rem;
   font-weight: 900;
   color: var(--team-accent, #00d2ff);
   line-height: 1;
 }
 
 .projected-marker .proj-arrow {
-  font-size: 0.72rem;
+  font-size: 0.65rem;
   color: #fff;
   line-height: 1;
 }
@@ -348,13 +391,27 @@
   animation: finishPulse 2s ease-in-out infinite;
 }
 
-.maze-tile.destination::after {
-  content: '';
+.maze-tile.destination.locked {
+  background: radial-gradient(circle at center, rgba(239, 68, 68, 0.18) 0%, #15090e 70%);
+  border-color: rgba(239, 68, 68, 0.6);
+  box-shadow: 0 0 12px rgba(239, 68, 68, 0.35);
+  animation: none;
+}
+
+.maze-tile.destination.locked .dest-beacon-ring {
+  border-color: rgba(239, 68, 68, 0.4);
+}
+
+.maze-tile.destination.unlocked {
+  background: radial-gradient(circle at center, rgba(16, 185, 129, 0.3) 0%, #071512 70%);
+  border-color: #10b981;
+  box-shadow: 0 0 25px rgba(16, 185, 129, 0.7);
+  animation: finishPulse 1.2s ease-in-out infinite;
 }
 
 .dest-beacon-ring {
   position: absolute;
-  inset: -4px;
+  inset: -3px;
   border: 1px dashed rgba(16, 185, 129, 0.5);
   border-radius: 8px;
   animation: rotateRing 8s linear infinite;
@@ -366,7 +423,7 @@
 }
 
 .dest-flag {
-  font-size: 1.4rem;
+  font-size: 1.15rem;
   z-index: 2;
   filter: drop-shadow(0 0 8px #10b981);
 }
@@ -385,8 +442,8 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 54px;
-  height: 54px;
+  width: 44px;
+  height: 44px;
   background: #090e17;
   border: 2px solid var(--team-accent, #00d2ff);
   border-radius: 50%;
@@ -401,7 +458,7 @@
 
 .robot-visor {
   font-family: var(--font-mono, monospace);
-  font-size: 0.76rem;
+  font-size: 0.66rem;
   font-weight: 900;
   color: var(--team-accent, #00d2ff);
   text-shadow: 0 0 8px var(--team-glow, rgba(0, 210, 255, 0.8));

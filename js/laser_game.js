@@ -14,7 +14,7 @@ class LaserLockdownGame {
     this.cols = 12;
     this.rows = 10;
     this.tileSize = 48; // 12 * 48 = 576px wide, 10 * 48 = 480px high
-    this.timeLimit = config.timeLimit || 75;
+    this.timeLimit = config.timeLimit || 50;
     this.timeLeft = this.timeLimit;
     this.timerInterval = null;
     this.animFrameId = null;
@@ -65,39 +65,45 @@ class LaserLockdownGame {
     }
 
     if (this.team === 'A') {
-      // Team A Map Architecture
+      // Team A Map Architecture (Advanced Tactical High-Alert Facility)
       this.startPos = { x: 1, y: 1 };
       this.exitPos = { x: 10, y: 8 };
       this.chipPos = { x: 8, y: 4 };
 
-      // Interior Walls
-      // Top divider wall
+      // Interior Walls & Safe Niches
+      // Upper vertical divider wall
       this.map[1][4] = 1; this.map[2][4] = 1; this.map[3][4] = 1;
       // Central chamber walls
       this.map[2][6] = 1; this.map[2][7] = 1; this.map[2][8] = 1; this.map[2][9] = 1;
       this.map[3][6] = 1; this.map[3][9] = 1;
       this.map[5][6] = 1; this.map[5][9] = 1;
       this.map[6][6] = 1; this.map[6][7] = 1; this.map[6][8] = 1; this.map[6][9] = 1;
-      // Lower obstacles
+      // Lower tactical barriers
       this.map[5][2] = 1; this.map[5][3] = 1; this.map[5][4] = 1;
       this.map[7][2] = 1; this.map[7][3] = 1; this.map[7][4] = 1;
 
-      // 3 Security Lasers
+      // 6 High-Security Tactical Lasers
       this.lasers = [
-        // Laser 1: Continuously Active across upper corridor
-        { id: 1, type: 'continuous', x1: 5, y1: 1, x2: 5, y2: 3, dir: 'v', active: true },
-        // Laser 2: Alternates ON/OFF (2.0s ON, 2.0s OFF)
-        { id: 2, type: 'alternate', x1: 1, y1: 4, x2: 4, y2: 4, dir: 'h', periodOn: 2000, periodOff: 2000, active: false, timer: 0 },
-        // Laser 3: Pulses regularly (1.5s ON, 2.5s OFF) guarding chip chamber
-        { id: 3, type: 'pulse', x1: 6, y1: 4, x2: 6, y2: 5, dir: 'v', periodOn: 1500, periodOff: 2500, active: false, timer: 0 }
+        // Laser 1: Sweeping Patrol Drone Beam across top corridor (Columns 1-3)
+        { id: 1, type: 'patrol', dir: 'v', x1: 2, y1: 1, x2: 2, y2: 3, patrolAxis: 'x', minVal: 1, maxVal: 3, period: 2400, timer: 0, active: true },
+        // Laser 2: Rapid Alternating Corridor Beam (1.3s ON, 1.3s OFF)
+        { id: 2, type: 'alternate', x1: 1, y1: 4, x2: 4, y2: 4, dir: 'h', periodOn: 1300, periodOff: 1300, active: false, timer: 0 },
+        // Laser 3: Pulse Gate Laser guarding chamber opening
+        { id: 3, type: 'pulse', x1: 6, y1: 4, x2: 6, y2: 4, dir: 'v', periodOn: 1400, periodOff: 1600, active: false, timer: 400 },
+        // Laser 4: Anti-Phase Criss-Cross Vertical Beam (active when Laser 2 is OFF)
+        { id: 4, type: 'alternate', x1: 5, y1: 5, x2: 5, y2: 8, dir: 'v', periodOn: 1300, periodOff: 1300, active: false, timer: 1300 },
+        // Laser 5: Sweeping Patrol Drone Laser in lower sector (Rows 6-8)
+        { id: 5, type: 'patrol', dir: 'h', x1: 7, y1: 7, x2: 9, y2: 7, patrolAxis: 'y', minVal: 6, maxVal: 8, period: 2200, timer: 700, active: true },
+        // Laser 6: Emergency Facility Lockdown Beam (Engaged ONLY upon chip retrieval!)
+        { id: 6, type: 'emergency', x1: 10, y1: 5, x2: 10, y2: 7, dir: 'v', active: false, requiresChip: true }
       ];
     } else {
-      // Team B Map Architecture (Distinct Layout)
+      // Team B Map Architecture (Distinct High-Alert Layout)
       this.startPos = { x: 1, y: 8 };
       this.exitPos = { x: 10, y: 1 };
       this.chipPos = { x: 4, y: 4 };
 
-      // Interior Walls
+      // Interior Walls & Safe Niches
       this.map[8][4] = 1; this.map[7][4] = 1; this.map[6][4] = 1;
       this.map[2][2] = 1; this.map[2][3] = 1; this.map[2][4] = 1; this.map[2][5] = 1;
       this.map[3][2] = 1; this.map[3][5] = 1;
@@ -106,14 +112,20 @@ class LaserLockdownGame {
       this.map[4][8] = 1; this.map[4][9] = 1;
       this.map[7][7] = 1; this.map[7][8] = 1;
 
-      // 3 Security Lasers
+      // 6 High-Security Tactical Lasers
       this.lasers = [
-        // Laser 1: Continuously Active
-        { id: 1, type: 'continuous', x1: 5, y1: 8, x2: 5, y2: 6, dir: 'v', active: true },
-        // Laser 2: Alternates ON/OFF
-        { id: 2, type: 'alternate', x1: 7, y1: 5, x2: 10, y2: 5, dir: 'h', periodOn: 2000, periodOff: 2000, active: false, timer: 0 },
-        // Laser 3: Pulses regularly guarding chip entrance
-        { id: 3, type: 'pulse', x1: 5, y1: 4, x2: 5, y2: 5, dir: 'v', periodOn: 1500, periodOff: 2500, active: false, timer: 0 }
+        // Laser 1: Sweeping Patrol Drone Beam in lower corridor (Columns 1-3)
+        { id: 1, type: 'patrol', dir: 'v', x1: 2, y1: 6, x2: 2, y2: 8, patrolAxis: 'x', minVal: 1, maxVal: 3, period: 2400, timer: 0, active: true },
+        // Laser 2: Rapid Alternating Corridor Beam (1.3s ON, 1.3s OFF)
+        { id: 2, type: 'alternate', x1: 1, y1: 5, x2: 4, y2: 5, dir: 'h', periodOn: 1300, periodOff: 1300, active: false, timer: 0 },
+        // Laser 3: Pulse Gate Laser guarding chamber entrance
+        { id: 3, type: 'pulse', x1: 5, y1: 4, x2: 5, y2: 4, dir: 'v', periodOn: 1400, periodOff: 1600, active: false, timer: 400 },
+        // Laser 4: Anti-Phase Criss-Cross Vertical Beam (active when Laser 2 is OFF)
+        { id: 4, type: 'alternate', x1: 6, y1: 1, x2: 6, y2: 4, dir: 'v', periodOn: 1300, periodOff: 1300, active: false, timer: 1300 },
+        // Laser 5: Sweeping Patrol Drone Laser in upper sector (Rows 1-3)
+        { id: 5, type: 'patrol', dir: 'h', x1: 2, y1: 2, x2: 4, y2: 2, patrolAxis: 'y', minVal: 1, maxVal: 3, period: 2200, timer: 700, active: true },
+        // Laser 6: Emergency Facility Lockdown Beam (Engaged ONLY upon chip retrieval!)
+        { id: 6, type: 'emergency', x1: 10, y1: 2, x2: 10, y2: 4, dir: 'v', active: false, requiresChip: true }
       ];
     }
 
@@ -236,10 +248,12 @@ class LaserLockdownGame {
     const secs = this.timeLeft % 60;
     this.timerElem.textContent = `TIME: 0${mins}:${secs < 10 ? '0' : ''}${secs}`;
 
-    if (this.timeLeft <= 15) {
-      this.timerElem.parentElement.classList.add('warning');
-    } else {
-      this.timerElem.parentElement.classList.remove('warning');
+    if (this.timerElem.parentElement) {
+      if (this.timeLeft <= 15) {
+        this.timerElem.parentElement.classList.add('warning');
+      } else {
+        this.timerElem.parentElement.classList.remove('warning');
+      }
     }
   }
 
@@ -414,10 +428,27 @@ class LaserLockdownGame {
   }
 
   update(dt) {
-    // 1. Update Laser Timing & Telegraph Warning State
+    // 1. Update Laser Timing & Patrol Sweeping State
     for (let laser of this.lasers) {
       if (laser.type === 'continuous') {
         laser.active = true;
+        laser.warning = false;
+      } else if (laser.type === 'patrol') {
+        laser.timer += dt;
+        const phase = (laser.timer % laser.period) / laser.period;
+        const pingPong = phase < 0.5 ? phase * 2 : (1 - phase) * 2;
+        const currentCoord = Math.round(laser.minVal + pingPong * (laser.maxVal - laser.minVal));
+        if (laser.patrolAxis === 'x') {
+          laser.x1 = currentCoord;
+          laser.x2 = currentCoord;
+        } else {
+          laser.y1 = currentCoord;
+          laser.y2 = currentCoord;
+        }
+        laser.active = true;
+        laser.warning = false;
+      } else if (laser.type === 'emergency') {
+        laser.active = this.hasChip;
         laser.warning = false;
       } else if (laser.type === 'alternate' || laser.type === 'pulse') {
         laser.timer += dt;
@@ -425,11 +456,11 @@ class LaserLockdownGame {
         const currentMod = laser.timer % cycle;
         laser.active = currentMod < laser.periodOn;
 
-        // Telegraph warning 650ms before laser blasts on!
+        // Telegraph warning 450ms before laser blasts on!
         const remainingOffTime = cycle - currentMod;
-        const isWarning = !laser.active && remainingOffTime <= 650;
+        const isWarning = !laser.active && remainingOffTime <= 450;
         if (isWarning && !laser.warning) {
-          if (window.soundEngine) {
+          if (window.soundEngine && typeof window.soundEngine.playLaserWarning === 'function') {
             window.soundEngine.playLaserWarning();
           }
         }
@@ -654,6 +685,19 @@ class LaserLockdownGame {
         ctx.stroke();
         ctx.setLineDash([]);
       }
+
+      // Sweeping Drone Emitter Heads
+      if (laser.type === 'patrol') {
+        ctx.save();
+        ctx.fillStyle = '#f59e0b';
+        ctx.shadowColor = '#f59e0b';
+        ctx.shadowBlur = 10;
+        ctx.beginPath();
+        ctx.arc(x1, y1, 5.5, 0, Math.PI * 2);
+        ctx.arc(x2, y2, 5.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
     }
 
     // Render Robot
@@ -707,6 +751,25 @@ class LaserLockdownGame {
     ctx.fillRect(-12, 14, 24, 4);
 
     ctx.restore();
+
+    // Facility Lockdown Status Banner on Canvas
+    if (this.hasChip) {
+      ctx.save();
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.22)';
+      ctx.fillRect(0, 0, this.canvas.width, 24);
+      ctx.strokeStyle = '#ef4444';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(0, 0, this.canvas.width, 24);
+      ctx.fillStyle = '#ef4444';
+      ctx.font = 'bold 11px monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      const blink = Math.floor(Date.now() / 400) % 2 === 0;
+      if (blink) {
+        ctx.fillText('⚠️ FACILITY LOCKDOWN ACTIVE // EMERGENCY LASERS ENGAGED // ESCAPE TO EXIT 🏁', this.canvas.width / 2, 12);
+      }
+      ctx.restore();
+    }
   }
 
   destroy() {

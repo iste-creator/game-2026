@@ -5,9 +5,11 @@
 class NavGame {
   constructor(config) {
     this.team = config.team || 'A';
-    this.gridSize = 5;
+    this.gridSize = config.gridSize || 6;
     this.startPos = { ...config.startPos };
     this.goalPos = { ...config.goalPos };
+    this.keycardPos = config.keycardPos ? { ...config.keycardPos } : null;
+    this.hasKeycard = false;
     this.obstacles = config.obstacles || [];
     this.currentPos = { ...this.startPos };
     this.sequence = [];
@@ -84,6 +86,10 @@ class NavGame {
     return this.goalPos.x === x && this.goalPos.y === y;
   }
 
+  isKeycard(x, y) {
+    return this.keycardPos && this.keycardPos.x === x && this.keycardPos.y === y;
+  }
+
   renderBoard() {
     if (!this.boardElem) return;
     this.boardElem.innerHTML = '';
@@ -99,10 +105,27 @@ class NavGame {
           tile.classList.add('obstacle');
           tile.setAttribute('title', `Hazard at (${x}, ${y})`);
           tile.innerHTML = '<div class="hazard-pulse-core">⚠️</div>';
+        } else if (this.isKeycard(x, y)) {
+          tile.classList.add('keycard');
+          if (this.hasKeycard) tile.classList.add('collected');
+          tile.setAttribute('title', `Encryption Keycard at (${x}, ${y})`);
+          tile.innerHTML = `
+            <div class="keycard-badge-wrap">
+              <span class="keycard-icon">💳</span>
+              <span class="keycard-subtext">KEYCARD</span>
+            </div>
+          `;
         } else if (this.isGoal(x, y)) {
           tile.classList.add('destination');
-          tile.setAttribute('title', `Finish at (${x}, ${y})`);
-          tile.innerHTML = '<div class="dest-beacon-ring"></div><div class="dest-flag">🏁</div>';
+          if (this.keycardPos && !this.hasKeycard) {
+            tile.classList.add('locked');
+            tile.setAttribute('title', `Exit Gate (LOCKED - Keycard Required) at (${x}, ${y})`);
+            tile.innerHTML = '<div class="dest-beacon-ring"></div><div class="dest-flag">🔒</div>';
+          } else {
+            tile.classList.add('unlocked');
+            tile.setAttribute('title', `Exit Gate (UNLOCKED) at (${x}, ${y})`);
+            tile.innerHTML = '<div class="dest-beacon-ring"></div><div class="dest-flag">🏁</div>';
+          }
         }
 
         // Direct tile clicking to queue moves!
@@ -148,7 +171,7 @@ class NavGame {
   }
 
   updateRobotPosition(smooth = true, isCrash = false, isVictory = false) {
-    if (!this.boardElem || !this.robotElem) return;
+    if (!this.boardElem || !this.robotElem || !this.robotElem.style) return;
 
     const targetTile = this.boardElem.querySelector(`.maze-tile[data-x="${this.currentPos.x}"][data-y="${this.currentPos.y}"]`);
     
@@ -286,7 +309,13 @@ class NavGame {
     }
 
     if (this.coordTextElem) {
-      this.coordTextElem.textContent = `[X: ${this.currentPos.x}, Y: ${this.currentPos.y}]`;
+      let keycardStatus = '';
+      if (this.keycardPos) {
+        keycardStatus = this.hasKeycard
+          ? ' &bull; <span style="color: #10b981;">💳 KEYCARD: ACQUIRED ✓</span>'
+          : ' &bull; <span style="color: #f59e0b;">💳 KEYCARD: REQUIRED</span>';
+      }
+      this.coordTextElem.innerHTML = `[X: ${this.currentPos.x}, Y: ${this.currentPos.y}]${keycardStatus}`;
     }
 
     if (this.moveCountElem) {
@@ -307,7 +336,7 @@ class NavGame {
 
   addMove(dir) {
     if (this.isMoving) return;
-    if (this.sequence.length >= 15) return;
+    if (this.sequence.length >= 24) return;
 
     this.sequence.push(dir);
     this.renderSequence();
@@ -349,7 +378,9 @@ class NavGame {
     this.activeStepIndex = -1;
     this.currentPos = { ...this.startPos };
     this.sequence = [];
+    this.hasKeycard = false;
 
+    this.renderBoard();
     this.updateRobotPosition(false);
     this.renderSequence();
     this.updateHUD('READY');
@@ -398,9 +429,11 @@ class NavGame {
     this.hideAlert();
     this.hideSuccess();
 
-    // Start from startPos for each run
+    // Reset board state for each execution run
     this.currentPos = { ...this.startPos };
+    this.hasKeycard = false;
     this.activeStepIndex = -1;
+    this.renderBoard();
     this.updateRobotPosition(false);
     this.updateHUD('MOVING');
 
@@ -415,7 +448,11 @@ class NavGame {
         this.renderSequence();
 
         if (this.currentPos.x === this.goalPos.x && this.currentPos.y === this.goalPos.y) {
-          this.handleGoalReached();
+          if (this.keycardPos && !this.hasKeycard) {
+            this.handleKeycardDenied();
+          } else {
+            this.handleGoalReached();
+          }
         } else {
           this.isMoving = false;
           this.setControlsDisabled(false);
@@ -453,32 +490,71 @@ class NavGame {
       // 3. Move Robot smoothly to next tile
       this.currentPos = { x: nextX, y: nextY };
       this.updateRobotPosition(true);
+
+      // 4. Check Keycard collection
+      if (this.isKeycard(nextX, nextY) && !this.hasKeycard) {
+        this.hasKeycard = true;
+        const keyTile = this.boardElem.querySelector('.maze-tile.keycard');
+        if (keyTile) keyTile.classList.add('collected');
+
+        const goalTile = this.boardElem.querySelector('.maze-tile.destination');
+        if (goalTile) {
+          goalTile.classList.remove('locked');
+          goalTile.classList.add('unlocked');
+          const flag = goalTile.querySelector('.dest-flag');
+          if (flag) flag.textContent = '🏁';
+        }
+
+        if (window.soundEngine && typeof window.soundEngine.playChipCollect === 'function') {
+          window.soundEngine.playChipCollect();
+        }
+      }
+
       this.updateHUD('MOVING');
       if (window.soundEngine) {
         if (typeof window.soundEngine.playServo === 'function') window.soundEngine.playServo();
         if (typeof window.soundEngine.playStep === 'function') window.soundEngine.playStep();
       }
 
-      // Check if reached destination right on this step!
+      // 5. Check if reached destination right on this step!
       if (this.currentPos.x === this.goalPos.x && this.currentPos.y === this.goalPos.y) {
-        this.stepTimer = setTimeout(() => {
-          this.handleGoalReached();
-        }, 320);
-        return;
+        if (this.keycardPos && !this.hasKeycard) {
+          this.stepTimer = setTimeout(() => {
+            this.handleKeycardDenied();
+          }, 320);
+          return;
+        } else {
+          this.stepTimer = setTimeout(() => {
+            this.handleGoalReached();
+          }, 320);
+          return;
+        }
       }
 
       step++;
-      this.stepTimer = setTimeout(executeNextStep, 400);
+      this.stepTimer = setTimeout(executeNextStep, 380);
     };
 
     this.stepTimer = setTimeout(executeNextStep, 350);
+  }
+
+  handleKeycardDenied() {
+    this.isMoving = false;
+    this.updateHUD('BLOCKED');
+    this.updateRobotPosition(true, true, false);
+    this.showAlert("ACCESS DENIED: KEYCARD REQUIRED! You must navigate through the 💳 Keycard before reaching the Exit Gate!");
+    this.setControlsDisabled(false);
+
+    if (window.soundEngine && typeof window.soundEngine.playCrash === 'function') {
+      window.soundEngine.playCrash();
+    }
   }
 
   handleBlocked() {
     this.isMoving = false;
     this.updateHUD('BLOCKED');
     this.updateRobotPosition(true, true, false); // crashed shake animation
-    this.showAlert("PATH BLOCKED! Recalculate your route.");
+    this.showAlert("PATH BLOCKED! Robot hit a hazard. Recalculate your route.");
     this.setControlsDisabled(false);
 
     if (window.soundEngine && typeof window.soundEngine.playCrash === 'function') {
