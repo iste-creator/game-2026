@@ -434,6 +434,7 @@
   <script src="../js/vault_security.js"></script>
   <script>
     let activeVaultId = null;
+    let decryptedState = { 1: false, 2: false, 3: false, 4: false };
 
     function continueFromVault(id) {
       if (id === 1) closePowerGridGameB();
