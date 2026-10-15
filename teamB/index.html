@@ -347,6 +347,136 @@
     </div>
   </div>
 
+  <!-- Mini-Game Modal: Engineering Quiz Matrix (Vault 03 - Team B) -->
+  <div class="quiz-modal-overlay" id="quizModal_B">
+    <div id="quizContainer_B" style="width: 100%; max-width: 720px; display: flex; justify-content: center;">
+      <!-- Populated dynamically by EngineeringQuizGame -->
+    </div>
+  </div>
+
+  <!-- Mini-Game Modal: LASER LOCKDOWN (Team B - Vault 4) -->
+  <div class="laser-modal-overlay" id="laserModalB">
+    <div class="laser-modal-window" style="--team-accent: var(--accent-teamB); --team-glow: rgba(255, 85, 0, 0.35); border-color: var(--accent-teamB);">
+      <!-- Window Top Bar -->
+      <div class="laser-topbar">
+        <div class="laser-header-tag" style="color: var(--accent-teamB);">
+          <span class="blink-led" style="background: var(--accent-teamB); box-shadow: 0 0 8px var(--accent-teamB);"></span>
+          VAULT 04 // SECURITY SYSTEM // LASER LOCKDOWN
+        </div>
+        <button class="game-close-btn" onclick="closeLaserGameB()">&times;</button>
+      </div>
+
+      <div class="laser-content-area">
+        <div class="laser-title-row">
+          <div>
+            <div class="laser-quest-heading">OPERATION REBUILD // FINAL CHALLENGE</div>
+            <h2 class="laser-main-title">LASER LOCKDOWN</h2>
+          </div>
+          <div style="display: flex; gap: 0.5rem; align-items: center;">
+            <button class="btn-laser-action" onclick="laserGameB && laserGameB.togglePause()" title="Pause/Resume">
+              ⏸ PAUSE
+            </button>
+            <button class="btn-laser-action" onclick="laserGameB && laserGameB.retry()" title="Reset Level">
+              ↺ RESET
+            </button>
+          </div>
+        </div>
+
+        <!-- Telemetry Status Strip -->
+        <div class="laser-telemetry-strip">
+          <div class="laser-chip-pill" id="laserChipB">
+            <span>○</span> ACCESS CHIP: MISSING
+          </div>
+
+          <div class="laser-status-pill ready" id="laserStatusB">
+            READY
+          </div>
+        </div>
+
+        <!-- Canvas Arena Wrapper -->
+        <div class="laser-arena-wrapper">
+          <div class="laser-canvas-box">
+            <canvas id="laserCanvasB" class="laser-canvas" width="576" height="480"></canvas>
+
+            <!-- Screen Flash on Collision -->
+            <div class="laser-flash-overlay" id="laserFlashB"></div>
+
+            <!-- Modal Briefing Overlay -->
+            <div class="laser-briefing-modal" id="laserBriefingB">
+              <div class="briefing-stamp" style="border-color: var(--accent-teamB); color: var(--accent-teamB);">SECURITY BREACH // VAULT 04</div>
+              <h3 class="briefing-title">MISSION BRIEFING</h3>
+              <p class="briefing-text">
+                VELOCITY's final engineering blueprint is locked inside the facility's security vault.<br><br>
+                <strong>TACTICAL ALERT:</strong> High-density security grid engaged with 6 tactical beams, including sweeping patrol drones and an emergency post-chip lockdown perimeter.<br><br>
+                Retrieve the access chip, evade security laser beams, and reach the extraction zone to complete the mission!
+              </p>
+              <button class="btn-start-mission" style="background: var(--accent-teamB); border-color: var(--accent-teamB); box-shadow: 0 0 20px rgba(255, 85, 0, 0.4);" onclick="laserGameB && laserGameB.startMission()">
+                START MISSION ▶
+              </button>
+            </div>
+
+            <!-- Timeout / Failed Overlay -->
+            <div class="laser-failed-modal" id="laserFailedB">
+              <div style="font-size: 3rem; margin-bottom: 0.5rem;">🚨</div>
+              <h3 class="failed-title">SECURITY LOCKDOWN — MISSION FAILED</h3>
+              <p style="font-family: var(--font-body); color: #cbd5e1; max-width: 480px; margin-bottom: 1.5rem; line-height: 1.5;">
+                The security lockdown timer expired before the authorization chip was extracted.<br>
+                Recalibrate your movement timing and retry.
+              </p>
+              <button class="btn-retry-mission" onclick="laserGameB && laserGameB.retry()">
+                RETRY MISSION ↺
+              </button>
+            </div>
+
+            <!-- Victory Overlay -->
+            <div class="laser-victory-modal" id="laserVictoryB">
+              <div class="victory-stamp" style="border-color: var(--accent-teamB); color: var(--accent-teamB);">SECURITY OVERRIDE SUCCESSFUL</div>
+              <h3 class="victory-title">LASER LOCKDOWN COMPLETE</h3>
+              <p class="victory-sub">Security bypassed. VELOCITY's final subsystem is accessible.</p>
+
+              <div class="vault-code-plaque" style="border-color: var(--accent-teamB);">
+                <div class="code-lbl">VAULT AUTHORIZATION CODE</div>
+                <div class="code-digits" style="color: var(--accent-teamB);">----</div>
+              </div>
+
+              <div class="exec-instruction-text active" id="laserExecBoxB" style="display: block; margin: 0.75rem 0;">
+                Show this success screen to the event executive to collect the physical key for Vault 04.
+              </div>
+
+              <div style="display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center; width: 100%; margin-top: 1rem;">
+                <button class="btn-continue-exec" style="background: var(--accent-teamB); border-color: var(--accent-teamB); box-shadow: 0 0 20px rgba(255, 85, 0, 0.4);" onclick="continueFromVault(4)">
+                  CONTINUE &rarr; PROCEED TO NEXT MISSION
+                </button>
+                <button class="btn-continue-exec btn-facility-home" onclick="continueFromVault(4)" style="background: #111e2f; color: #94a3b8; border: 1px solid #334155; box-shadow: none;">
+                  &larr; FACILITY HOME
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Controls & Legend Strip -->
+          <div class="laser-footer-controls">
+            <div class="laser-legend-strip">
+              <span>🎮 W/A/S/D or Arrows to Move</span>
+              <span>💾 Chip</span>
+              <span>⚡ Lasers</span>
+              <span>🏁 Extraction</span>
+            </div>
+
+            <!-- Mini D-pad for touch / mouse navigation -->
+            <div class="laser-dpad-mini">
+              <button class="btn-dpad-mini" onclick="laserGameB && laserGameB.step('UP')" title="Move Up">▲</button>
+              <button class="btn-dpad-mini" onclick="laserGameB && laserGameB.step('LEFT')" title="Move Left">◀</button>
+              <button class="btn-dpad-mini" onclick="laserGameB && laserGameB.step('DOWN')" title="Move Down">▼</button>
+              <button class="btn-dpad-mini" onclick="laserGameB && laserGameB.step('RIGHT')" title="Move Right">▶</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
   <!-- Passcode Entry Modal: 6-Digit Physical Passcode Clearance -->
   <div class="passcode-modal-overlay" id="passcodeModal">
     <div class="passcode-modal-window" style="border-color: var(--accent-teamB); box-shadow: 0 0 70px rgba(0, 0, 0, 0.95), 0 0 35px rgba(255, 85, 0, 0.35);">
