@@ -92,9 +92,15 @@
    ```
 
 2. Start the local server:
-   ```bash
-   node server.js
-   ```
+   - Using Python (Recommended):
+     ```bash
+     pip install -r requirements.txt   # Optional
+     python -m http.server 3000
+     ```
+   - Or using Node.js:
+     ```bash
+     npx serve -l 3000 .
+     ```
 
 3. Open your browser:
    - Facility Hub: `http://localhost:3000/`

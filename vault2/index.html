@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VAULT 02 // ELECTRICAL CIRCUIT GRID // OPERATION REBUILD</title>
+  <style>
+    /* ==========================================================================
+       INDUSTRIAL TERMINAL DESIGN SYSTEM & CSS RESET
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    :root {
+      --bg-dark: #030712;
+      --bg-panel: #060d17;
+      --bg-card: #09121f;
+      --bg-cell: #0c1829;
+      --border-panel: #1e293b;
+      --border-focus: #00e5ff;
+      --wire-dim: #334155;
+      --wire-live: #00e5ff;
+      --wire-live-glow: rgba(0, 229, 255, 0.65);
+      --bulb-unlit: #64748b;
+      --bulb-lit: #ffea00;
+      --bulb-glow: rgba(255, 234, 0, 0.7);
+      --power-blue: #0284c7;
+      --accent-green: #10b981;
+      --font-mono: 'SF Mono', 'Segoe UI Mono', 'Courier New', monospace;
+      --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 50% 10%, rgba(0, 229, 255, 0.08) 0%, transparent 60%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 32px 32px, 32px 32px;
+      color: #f1f5f9;
+      font-family: var(--font-display);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1rem;
+      overflow-x: hidden;
+    }
+
+    /* Terminal Scanlines Overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+      background-size: 100% 4px;
+      z-index: 1000;
+      pointer-events: none;
+      opacity: 0.6;
+    }
+
+    /* Hazard Caution Stripe Top */
+    .hazard-stripe {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: repeating-linear-gradient(
+        -45deg,
+        #f59e0b,
+        #f59e0b 12px,
+        #111827 12px,
+        #111827 24px
+      );
+      z-index: 999;
+    }
+
+    /* Terminal Container */
+    .console-container {
+      width: 100%;
+      max-width: 680px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-panel);
+      border-radius: 14px;
+      box-shadow: 0 0 60px rgba(0, 229, 255, 0.12), 0 25px 50px -12px rgba(0, 0, 0, 0.85);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Topbar */
+    .console-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.85rem 1.4rem;
+      background: #09121f;
+      border-bottom: 1px solid var(--border-panel);
+    }
+
+    .header-tag {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--border-focus);
+    }
+
+    .blink-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border-focus);
+      box-shadow: 0 0 8px var(--border-focus);
+      animation: blink 1.2s infinite ease-in-out;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.25; transform: scale(0.85); }
+    }
+
+    .system-badge {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #64748b;
+      letter-spacing: 0.06em;
+    }
+
+    /* Content Area */
+    .console-body {
+      padding: 1.25rem 1.4rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      position: relative;
+    }
+
+    /* Title Row */
+    .title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .quest-sub {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--border-focus);
+      letter-spacing: 0.08em;
+      margin-bottom: 0.2rem;
+    }
+
+    .main-title {
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: #ffffff;
+      margin: 0;
+    }
+
+    .badge-info {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: #94a3b8;
+      background: #0d1929;
+      border: 1px solid var(--border-panel);
+      padding: 0.35rem 0.75rem;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+    }
+
+    /* Mission Objective Banner */
+    .mission-strip {
+      padding: 0.65rem 0.95rem;
+      background: #091524;
+      border-left: 3px solid var(--border-focus);
+      border-radius: 0 8px 8px 0;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: #cbd5e1;
+      line-height: 1.45;
+    }
+
+    .mission-strip strong {
+      color: #ffffff;
+    }
+
+    /* HUD Toolbar */
+    .hud-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      background: #07101b;
+      border: 1px solid var(--border-panel);
+      padding: 0.65rem 1rem;
+      border-radius: 8px;
+    }
+
+    .hud-group {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+    }
+
+    .moves-counter {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: #94a3b8;
+      letter-spacing: 0.05em;
+    }
+
+    .moves-val {
+      font-weight: 800;
+      color: var(--border-focus);
+      font-size: 0.95rem;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 0.3rem 0.75rem;
+      border-radius: 20px;
+      background: #0f172a;
+      border: 1px solid #334155;
+      color: #64748b;
+      transition: all 0.3s ease;
+    }
+
+    .status-pill.lit {
+      background: rgba(255, 234, 0, 0.15);
+      border-color: #ffd700;
+      color: #ffea00;
+      box-shadow: 0 0 12px rgba(255, 234, 0, 0.4);
+    }
+
+    .hud-btn {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #cbd5e1;
+      background: #0f1c2d;
+      border: 1px solid #1e293b;
+      padding: 0.45rem 0.9rem;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      transition: all 0.2s ease;
+    }
+
+    .hud-btn:hover {
+      background: #1e293b;
+      border-color: #475569;
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .hud-btn:active {
+      transform: translateY(1px);
+    }
+
+    .hud-btn.btn-reset {
+      border-color: rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+    }
+
+    .hud-btn.btn-reset:hover {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: #ef4444;
+      color: #fee2e2;
+    }
+
+    /* 5x5 Grid Board Container */
+    .grid-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0.5rem 0;
+    }
+
+    .wire-grid-5x5 {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      gap: 8px;
+      width: 100%;
+      max-width: 440px;
+      aspect-ratio: 1 / 1;
+      background: #040911;
+      padding: 10px;
+      border-radius: 12px;
+      border: 1px solid #1e293b;
+      box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.8), 0 0 20px rgba(0, 229, 255, 0.05);
+    }
+
+    /* Grid Tile Cells */
+    .wire-cell {
+      position: relative;
+      background: var(--bg-cell);
+      border: 1px solid #172437;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: border-color 0.25s, box-shadow 0.25s, background-color 0.25s;
+    }
+
+    .wire-cell.cell-wire:hover {
+      border-color: rgba(0, 229, 255, 0.5);
+      box-shadow: 0 0 10px rgba(0, 229, 255, 0.25);
+      background: #0f1f33;
+    }
+
+    .wire-cell.cell-wire:active {
+      transform: scale(0.96);
+    }
+
+    /* Fixed Terminal Cells */
+    .wire-cell.cell-power {
+      background: #06192e;
+      border-color: #0284c7;
+      box-shadow: 0 0 15px rgba(2, 132, 199, 0.35);
+    }
+
+    .wire-cell.cell-bulb {
+      background: #111422;
+      border-color: #334155;
+    }
+
+    .wire-cell.cell-bulb.bulb-lit {
+      background: #2b2207;
+      border-color: #ffd700;
+      box-shadow: 0 0 25px rgba(255, 215, 0, 0.65), inset 0 0 12px rgba(255, 234, 0, 0.45);
+    }
+
+    /* Terminal Labels & Badges */
+    .terminal-label {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      z-index: 5;
+      font-family: var(--font-mono);
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      padding: 2px 5px;
+      border-radius: 4px;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .power-label {
+      background: rgba(2, 132, 199, 0.3);
+      border: 1px solid #0284c7;
+      color: #38bdf8;
+    }
+
+    .bulb-label {
+      background: rgba(51, 65, 85, 0.5);
+      border: 1px solid #475569;
+      color: #94a3b8;
+    }
+
+    .bulb-label.active {
+      background: rgba(255, 215, 0, 0.25);
+      border: 1px solid #ffd700;
+      color: #ffea00;
+      box-shadow: 0 0 8px rgba(255, 215, 0, 0.5);
+    }
+
+    /* Rotating Wire Wrappers with Spring Bounce */
+    .wire-wrapper {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* Tactile Click Micro-Animation */
+    @keyframes cell-click-bounce {
+      0% { transform: scale(0.92); }
+      50% { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+
+    .wire-cell.cell-clicked {
+      animation: cell-click-bounce 0.24s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* SVG Elements */
+    .wire-svg, .wire-fixed-svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+      pointer-events: none;
+    }
+
+    /* Animated High-Voltage Electrical Current Stream */
+    @keyframes wire-stream-flow {
+      0% { stroke-dashoffset: 48; }
+      100% { stroke-dashoffset: 0; }
+    }
+
+    .wire-current-pulse {
+      stroke: #ffffff;
+      stroke-width: 2.8px;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 6 18;
+      animation: wire-stream-flow 0.75s linear infinite;
+      filter: drop-shadow(0 0 4px #00e5ff) drop-shadow(0 0 8px #00e5ff);
+      pointer-events: none;
+    }
+
+    /* Circuit Board Electric Surge Flash */
+    @keyframes grid-surge-wave {
+      0% { box-shadow: 0 0 10px rgba(0, 229, 255, 0.3); }
+      40% { box-shadow: 0 0 55px rgba(0, 229, 255, 0.9), inset 0 0 35px rgba(0, 229, 255, 0.5); }
+      100% { box-shadow: 0 0 20px rgba(0, 229, 255, 0.3); }
+    }
+
+    .wire-grid-5x5.surge-active {
+      animation: grid-surge-wave 0.65s ease-out;
+    }
+
+    /* Pulse glow animation for energized paths */
+    .energized-path {
+      animation: energy-pulse 1.8s infinite alternate ease-in-out;
+    }
+
+    @keyframes energy-pulse {
+      0% { filter: drop-shadow(0 0 2px #00e5ff); }
+      100% { filter: drop-shadow(0 0 7px #00e5ff); }
+    }
+
+    /* Power Cell Reactor Glow */
+    @keyframes power-reactor-pulse {
+      0%, 100% {
+        box-shadow: 0 0 14px rgba(2, 132, 199, 0.4), inset 0 0 8px rgba(0, 229, 255, 0.25);
+      }
+      50% {
+        box-shadow: 0 0 28px rgba(2, 132, 199, 0.8), inset 0 0 18px rgba(0, 229, 255, 0.55);
+      }
+    }
+
+    .wire-cell.cell-power {
+      background: #06192e;
+      border-color: #0284c7;
+      animation: power-reactor-pulse 2s infinite ease-in-out;
+    }
+
+    /* Bulb radiant lighting */
+    @keyframes bulb-radiate-flare {
+      0% { transform: scale(1); filter: drop-shadow(0 0 6px #ffea00); }
+      100% { transform: scale(1.22); filter: drop-shadow(0 0 22px #ffea00) drop-shadow(0 0 30px rgba(255, 234, 0, 0.85)); }
+    }
+
+    .wire-cell.cell-bulb.bulb-lit {
+      background: radial-gradient(circle at center, #3d2f09 0%, #1c1505 100%);
+      border-color: #ffd700;
+      box-shadow: 0 0 35px rgba(255, 215, 0, 0.8), inset 0 0 20px rgba(255, 234, 0, 0.5);
+    }
+
+    .bulb-pulsing {
+      animation: bulb-radiate-flare 1s infinite alternate ease-in-out;
+    }
+
+    /* ==========================================================================
+       VICTORY OVERLAY
+       ========================================================================== */
+    .victory-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.94);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 50;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .victory-card {
+      width: 100%;
+      max-width: 480px;
+      background: #08121f;
+      border: 1px solid var(--accent-green);
+      border-radius: 12px;
+      padding: 1.85rem 1.6rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 0 50px rgba(16, 185, 129, 0.35);
+      animation: victory-pop 0.35s ease-out;
+    }
+
+    @keyframes victory-pop {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .access-granted-banner {
+      font-family: var(--font-mono);
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: var(--accent-green);
+      letter-spacing: 0.05em;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 0.85rem 1.1rem;
+      border-radius: 8px;
+      width: 100%;
+      margin-bottom: 1.25rem;
+      line-height: 1.4;
+    }
+
+    .key-display-box {
+      background: #030712;
+      border: 1px dashed var(--accent-green);
+      border-radius: 8px;
+      padding: 0.95rem 1.8rem;
+      margin-bottom: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    .key-lbl {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: #94a3b8;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.35rem;
+    }
+
+    .key-code-val {
+      font-family: var(--font-mono);
+      font-size: 1.95rem;
+      font-weight: 900;
+      letter-spacing: 0.15em;
+      color: var(--accent-green);
+      text-shadow: 0 0 16px rgba(16, 185, 129, 0.65);
+    }
+
+    .victory-desc {
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border-panel);
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      margin-bottom: 1.35rem;
+      line-height: 1.45;
+    }
+
+    .btn-play-again {
+      background: var(--accent-green);
+      color: #030712;
+      font-family: var(--font-mono);
+      font-size: 0.92rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      padding: 0.8rem 2.25rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+      transition: all 0.2s ease;
+    }
+
+    .btn-play-again:hover {
+      background: #34d399;
+      transform: translateY(-2px);
+      box-shadow: 0 0 25px rgba(16, 185, 129, 0.75);
+    }
+
+    /* Responsive scaling */
+    @media (max-width: 480px) {
+      body {
+        padding: 0.75rem 0.5rem;
+      }
+      .console-topbar, .console-body {
+        padding: 0.8rem;
+      }
+      .wire-grid-5x5 {
+        gap: 5px;
+        padding: 6px;
+      }
+      .access-granted-banner {
+        font-size: 0.85rem;
+        padding: 0.65rem 0.8rem;
+      }
+      .key-code-val {
+        font-size: 1.6rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hazard-stripe"></div>
+
+  <main class="console-container">
+    <!-- Terminal Topbar -->
+    <header class="console-topbar">
+      <div class="header-tag">
+        <span class="blink-dot"></span>
+        VAULT 02 // ELECTRICAL CIRCUIT GRID
+      </div>
+      <div class="system-badge">SYS-02 // OPERATION REBUILD</div>
+    </header>
+
+    <!-- Console Main Body -->
+    <section class="console-body">
+      <!-- Title & Status -->
+      <div class="title-row">
+        <div>
+          <div class="quest-sub">OPERATION REBUILD // VAULT RIDDLE</div>
+          <h1 class="main-title">WIRE CIRCUIT ROUTING</h1>
+        </div>
+        <div class="badge-info">
+          <span>⚡</span> 5×5 CIRCUIT GRID
+        </div>
+      </div>
+
+      <!-- Objective Banner -->
+      <div class="mission-strip">
+        <strong>OBJECTIVE:</strong> Click scrambled wire tiles to rotate 90° clockwise. Create a continuous electrical path from the <strong>Power Source (0,0)</strong> to the <strong>Light Bulb (4,4)</strong>.
+      </div>
+
+      <!-- Telemetry HUD & Controls -->
+      <div class="hud-bar">
+        <div class="hud-group">
+          <div class="moves-counter">
+            MOVES: <span class="moves-val" id="movesVal">0</span>
+          </div>
+          <div class="status-pill" id="statusPill">
+            <span>○</span> LIGHT BULB: UNLIT
+          </div>
+        </div>
+        <div class="hud-group">
+          <button class="hud-btn" id="undoBtn" title="Undo last rotation">
+            <span>↶</span> UNDO
+          </button>
+          <button class="hud-btn btn-reset" id="resetBtn" title="Reset and re-scramble grid">
+            <span>↺</span> RESET GRID
+          </button>
+        </div>
+      </div>
+
+      <!-- 5x5 Grid Board -->
+      <div class="grid-container">
+        <div class="wire-grid-5x5" id="wireGrid">
+          <!-- Dynamically populated 25 tiles -->
+        </div>
+      </div>
+
+      <!-- Victory Overlay -->
+      <div class="victory-overlay" id="victoryOverlay">
+        <div class="victory-card">
+          <div class="access-granted-banner">
+            &gt;&gt; ACCESS GRANTED: You have correctly solved the Vault Riddle.
+          </div>
+          <div class="key-display-box">
+            <span class="key-lbl">GENERATED KEY CODE</span>
+            <span class="key-code-val" id="keyVal">KEY-VOLT99</span>
+          </div>
+          <div class="victory-desc">
+            All circuits energized. The primary electrical path from the Power Supply (0,0) to the Light Bulb (4,4) has been restored.
+          </div>
+          <button class="btn-play-again" id="playAgainBtn">
+            PLAY AGAIN ↺
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    /* ==========================================================================
+       SYNTHESIZED WEB AUDIO FEEDBACK
+       ========================================================================== */
+    class AudioEngine {
+      constructor() {
+        this.ctx = null;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playClick() {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const osc = this.ctx.createOscillator();
+          const gain = this.ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(800, this.ctx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(350, this.ctx.currentTime + 0.06);
+          gain.gain.setValueAtTime(0.12, this.ctx.currentTime);
+          gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + 0.06);
+          osc.connect(gain);
+          gain.connect(this.ctx.destination);
+          osc.start();
+          osc.stop(this.ctx.currentTime + 0.06);
+        } catch (e) {}
+      }
+      playVictory() {
+        try {
+          this.init();
+          if (!this.ctx) return;
+          const notes = [440, 554.37, 659.25, 880];
+          notes.forEach((freq, idx) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.1);
+            gain.gain.setValueAtTime(0.18, this.ctx.currentTime + idx * 0.1);
+            gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + idx * 0.1 + 0.28);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start(this.ctx.currentTime + idx * 0.1);
+            osc.stop(this.ctx.currentTime + idx * 0.1 + 0.3);
+          });
+        } catch (e) {}
+      }
+    }
+    const soundEngine = new AudioEngine();
+
+    /* ==========================================================================
+       GRID & WIRE PUZZLE ENGINE
+       ========================================================================== */
+    // Endpoint definitions at 0 degrees rotation: [North, East, South, West]
+    const BASE_ENDPOINTS = {
+      STRAIGHT: [true, false, true, false], // 0 deg = North-South
+      CORNER: [true, true, false, false],   // 0 deg = North-East (NE)
+      TEE: [true, true, true, false]        // 0 deg = North-East-South (NES)
+    };
+
+    function rotateEndpoints(ep, turns) {
+      let [n, e, s, w] = ep;
+      const count = ((turns % 4) + 4) % 4;
+      for (let i = 0; i < count; i++) {
+        const temp = w;
+        w = s;
+        s = e;
+        e = n;
+        n = temp;
+      }
+      return [n, e, s, w];
+    }
+
+    class WirePuzzleApp {
+      constructor() {
+        this.rows = 5;
+        this.cols = 5;
+        this.moves = 0;
+        this.isSolved = false;
+        this.history = [];
+        this.board = [];
+
+        // Guaranteed solvable 24-node high-difficulty serpentine labyrinth
+        this.rawLayout = [
+          // Row 0
+          [
+            { type: 'POWER', endpoints: [false, true, false, false], fixed: true },
+            { type: 'TEE', solutionTurns: 1 },      // ESW (connects W to PWR, S to 1,1, and E decoy to 0,2)
+            { type: 'STRAIGHT', solutionTurns: 1 }, // EW (decoy)
+            { type: 'CORNER', solutionTurns: 1 },   // ES (connects S to 1,3, E to 0,4)
+            { type: 'CORNER', solutionTurns: 2 }    // SW (connects W to 0,3, S to 1,4)
+          ],
+          // Row 1
+          [
+            { type: 'CORNER', solutionTurns: 1 },   // ES (decoy)
+            { type: 'CORNER', solutionTurns: 0 },   // NE (connects N to 0,1, E to 1,2)
+            { type: 'TEE', solutionTurns: 1 },      // ESW (connects W to 1,1, E to 1,3, S to 2,2)
+            { type: 'CORNER', solutionTurns: 3 },   // WN (connects W to 1,2, N to 0,3)
+            { type: 'STRAIGHT', solutionTurns: 0 }  // NS (connects N to 0,4, S to 2,4)
+          ],
+          // Row 2
+          [
+            { type: 'CORNER', solutionTurns: 1 },   // ES (connects E to 2,1, S to 3,0)
+            { type: 'CORNER', solutionTurns: 2 },   // SW (connects W to 2,0, S to 3,1)
+            { type: 'TEE', solutionTurns: 3 },      // WNE (connects N to 1,2, W to 2,1, E to 2,3)
+            { type: 'CORNER', solutionTurns: 2 },   // SW (connects W to 2,2, S to 3,3)
+            { type: 'STRAIGHT', solutionTurns: 0 }  // NS (connects N to 1,4, S to 3,4)
+          ],
+          // Row 3
+          [
+            { type: 'STRAIGHT', solutionTurns: 0 }, // NS (connects N to 2,0, S to 4,0)
+            { type: 'CORNER', solutionTurns: 0 },   // NE (connects N to 2,1, E to 3,2)
+            { type: 'CORNER', solutionTurns: 3 },   // WN (connects W to 3,1, N to 2,2)
+            { type: 'TEE', solutionTurns: 2 },      // SWN (connects N to 2,3, S to 4,3, W to 3,2)
+            { type: 'CORNER', solutionTurns: 3 }    // WN (connects N to 2,4, W to 3,3)
+          ],
+          // Row 4
+          [
+            { type: 'CORNER', solutionTurns: 0 },   // NE (connects N to 3,0, E to 4,1)
+            { type: 'STRAIGHT', solutionTurns: 1 }, // EW (connects W to 4,0, E to 4,2)
+            { type: 'STRAIGHT', solutionTurns: 1 }, // EW (connects W to 4,1, E to 4,3)
+            { type: 'TEE', solutionTurns: 3 },      // WNE (connects N to 3,3, W to 4,2, E to 4,4)
+            { type: 'BULB', endpoints: [false, false, false, true], fixed: true }
+          ]
+        ];
+
+        this.initDOM();
+        this.reset();
+      }
+
+      initDOM() {
+        this.gridContainer = document.getElementById('wireGrid');
+        this.movesValElem = document.getElementById('movesVal');
+        this.statusPillElem = document.getElementById('statusPill');
+        this.victoryOverlayElem = document.getElementById('victoryOverlay');
+        this.keyValElem = document.getElementById('keyVal');
+        this.undoBtn = document.getElementById('undoBtn');
+        this.resetBtn = document.getElementById('resetBtn');
+        this.playAgainBtn = document.getElementById('playAgainBtn');
+
+        this.undoBtn.addEventListener('click', () => this.undo());
+        this.resetBtn.addEventListener('click', () => this.reset());
+        this.playAgainBtn.addEventListener('click', () => this.reset());
+      }
+
+      generateUniqueKeyCode() {
+        const num = Math.floor(Math.random() * 90) + 10;
+        return `KEY-VOLT${num}`;
+      }
+
+      reset() {
+        this.moves = 0;
+        this.isSolved = false;
+        this.history = [];
+        this.victoryOverlayElem.style.display = 'none';
+
+        // Scramble non-fixed inner tiles randomly
+        let solved = false;
+        let tries = 0;
+
+        do {
+          this.board = this.rawLayout.map(row => row.map(tile => {
+            if (tile.fixed) {
+              return {
+                ...tile,
+                rotation: 0,
+                energized: false
+              };
+            }
+
+            const randTurns = Math.floor(Math.random() * 3) + 1;
+            const currentTurns = (tile.solutionTurns + randTurns) % 4;
+
+            return {
+              type: tile.type,
+              solutionTurns: tile.solutionTurns,
+              currentTurns: currentTurns,
+              rotation: currentTurns * 90,
+              endpoints: rotateEndpoints(BASE_ENDPOINTS[tile.type], currentTurns),
+              energized: false
+            };
+          }));
+
+          this.runPathCheck();
+          solved = this.isBulbConnected();
+          tries++;
+        } while (solved && tries < 10);
+
+        // Guarantee broken path at start
+        if (this.isBulbConnected()) {
+          this.rotateTile(0, 1, false);
+          this.rotateTile(1, 2, false);
+          this.runPathCheck();
+        }
+
+        this.render();
+        this.updateHUD();
+      }
+
+      rotateTile(r, c, record = true) {
+        if (this.isSolved) return;
+        const tile = this.board[r][c];
+        if (!tile || tile.fixed) return;
+
+        if (record) {
+          this.history.push({ r, c });
+          this.moves++;
+        }
+
+        tile.currentTurns = (tile.currentTurns + 1) % 4;
+        tile.rotation = tile.rotation + 90;
+        tile.endpoints = rotateEndpoints(BASE_ENDPOINTS[tile.type], tile.currentTurns);
+
+        soundEngine.playClick();
+        this.runPathCheck();
+        this.render();
+        this.updateHUD();
+
+        // Micro-animation bounce for clicked cell
+        if (this.gridContainer) {
+          const clicked = this.gridContainer.querySelector(`.wire-cell[data-row="${r}"][data-col="${c}"]`);
+          if (clicked) {
+            clicked.classList.add('cell-clicked');
+            setTimeout(() => clicked.classList.remove('cell-clicked'), 250);
+          }
+        }
+
+        if (this.isBulbConnected()) {
+          this.triggerVictory();
+        }
+      }
+
+      undo() {
+        if (this.isSolved || this.history.length === 0) return;
+        const last = this.history.pop();
+        const tile = this.board[last.r][last.c];
+        if (!tile || tile.fixed) return;
+
+        tile.currentTurns = (tile.currentTurns + 3) % 4;
+        tile.rotation = tile.rotation - 90;
+        tile.endpoints = rotateEndpoints(BASE_ENDPOINTS[tile.type], tile.currentTurns);
+        if (this.moves > 0) this.moves--;
+
+        soundEngine.playClick();
+        this.runPathCheck();
+        this.render();
+        this.updateHUD();
+      }
+
+      /**
+       * Breadth-First Search (BFS) to trace electrical flow from Power Source (0,0)
+       */
+      runPathCheck() {
+        for (let r = 0; r < this.rows; r++) {
+          for (let c = 0; c < this.cols; c++) {
+            this.board[r][c].energized = false;
+          }
+        }
+
+        const queue = [{ r: 0, c: 0 }];
+        this.board[0][0].energized = true;
+
+        while (queue.length > 0) {
+          const { r, c } = queue.shift();
+          const curr = this.board[r][c];
+          const [n, e, s, w] = curr.endpoints;
+
+          // North: curr.N -> neighbor.S
+          if (n && r > 0) {
+            const neighbor = this.board[r - 1][c];
+            if (neighbor && neighbor.endpoints[2] && !neighbor.energized) {
+              neighbor.energized = true;
+              queue.push({ r: r - 1, c });
+            }
+          }
+
+          // East: curr.E -> neighbor.W
+          if (e && c < this.cols - 1) {
+            const neighbor = this.board[r][c + 1];
+            if (neighbor && neighbor.endpoints[3] && !neighbor.energized) {
+              neighbor.energized = true;
+              queue.push({ r, c: c + 1 });
+            }
+          }
+
+          // South: curr.S -> neighbor.N
+          if (s && r < this.rows - 1) {
+            const neighbor = this.board[r + 1][c];
+            if (neighbor && neighbor.endpoints[0] && !neighbor.energized) {
+              neighbor.energized = true;
+              queue.push({ r: r + 1, c });
+            }
+          }
+
+          // West: curr.W -> neighbor.E
+          if (w && c > 0) {
+            const neighbor = this.board[r][c - 1];
+            if (neighbor && neighbor.endpoints[1] && !neighbor.energized) {
+              neighbor.energized = true;
+              queue.push({ r, c: c - 1 });
+            }
+          }
+        }
+      }
+
+      isBulbConnected() {
+        return this.board[this.rows - 1][this.cols - 1].energized === true;
+      }
+
+      triggerVictory() {
+        this.isSolved = true;
+        this.updateHUD();
+
+        // Trigger electric surge flash across the board
+        if (this.gridContainer) {
+          this.gridContainer.classList.add('surge-active');
+          setTimeout(() => this.gridContainer.classList.remove('surge-active'), 800);
+        }
+
+        this.keyValElem.textContent = this.generateUniqueKeyCode();
+        soundEngine.playVictory();
+
+        setTimeout(() => {
+          this.victoryOverlayElem.style.display = 'flex';
+        }, 600);
+      }
+
+      updateHUD() {
+        this.movesValElem.textContent = this.moves;
+        const lit = this.isBulbConnected();
+        if (lit) {
+          this.statusPillElem.className = 'status-pill lit';
+          this.statusPillElem.innerHTML = '<span>💡</span> LIGHT BULB: LIT ⚡';
+        } else {
+          this.statusPillElem.className = 'status-pill';
+          this.statusPillElem.innerHTML = '<span>○</span> LIGHT BULB: UNLIT';
+        }
+      }
+
+      render() {
+        this.gridContainer.innerHTML = '';
+
+        for (let r = 0; r < this.rows; r++) {
+          for (let c = 0; c < this.cols; c++) {
+            const tile = this.board[r][c];
+            const cell = document.createElement('div');
+            cell.className = 'wire-cell';
+            cell.dataset.row = r;
+            cell.dataset.col = c;
+
+            if (tile.type === 'POWER') {
+              cell.classList.add('cell-power');
+              cell.innerHTML = `
+                <div class="terminal-label power-label">
+                  <span>⚡</span> PWR
+                </div>
+              `;
+              cell.appendChild(this.createFixedWireSVG(tile.endpoints, true));
+            } else if (tile.type === 'BULB') {
+              cell.classList.add('cell-bulb');
+              if (tile.energized) cell.classList.add('bulb-lit');
+              cell.innerHTML = `
+                <div class="terminal-label bulb-label ${tile.energized ? 'active' : ''}">
+                  <span class="${tile.energized ? 'bulb-pulsing' : ''}">${tile.energized ? '💡' : '○'}</span> BULB
+                </div>
+              `;
+              cell.appendChild(this.createFixedWireSVG(tile.endpoints, tile.energized));
+            } else {
+              cell.classList.add('cell-wire');
+              cell.style.cursor = this.isSolved ? 'default' : 'pointer';
+
+              const wrapper = document.createElement('div');
+              wrapper.className = 'wire-wrapper';
+              wrapper.style.transform = `rotate(${tile.rotation}deg)`;
+              wrapper.appendChild(this.createTileSVG(tile.type, tile.energized));
+              cell.appendChild(wrapper);
+
+              cell.addEventListener('click', () => this.rotateTile(r, c));
+            }
+
+            this.gridContainer.appendChild(cell);
+          }
+        }
+      }
+
+      createTileSVG(type, isEnergized) {
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 100 100');
+        svg.setAttribute('class', `wire-svg ${isEnergized ? 'energized-path' : ''}`);
+
+        const strokeColor = isEnergized ? '#00e5ff' : '#334155';
+        let d = '';
+        if (type === 'STRAIGHT') {
+          d = 'M 50 0 L 50 100';
+        } else if (type === 'CORNER') {
+          d = 'M 50 0 L 50 50 L 100 50';
+        } else if (type === 'TEE') {
+          d = 'M 50 0 L 50 100 M 50 50 L 100 50';
+        }
+
+        svg.innerHTML = `
+          <defs>
+            <filter id="wireGlow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="3.5" result="blur" />
+              <feComposite in="SourceGraphic" in2="blur" operator="over" />
+            </filter>
+          </defs>
+          <path d="${d}" fill="none" stroke="#060c14" stroke-width="22" stroke-linecap="square" />
+          <path d="${d}" fill="none" stroke="#1e293b" stroke-width="14" stroke-linecap="square" />
+          <path d="${d}" fill="none" stroke="${strokeColor}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"
+                style="filter: ${isEnergized ? 'url(#wireGlow)' : 'none'}; transition: stroke 0.25s;" />
+          <!-- High-voltage animated current pulse stream -->
+          ${isEnergized ? `<path d="${d}" fill="none" class="wire-current-pulse" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" />` : ''}
+          <circle cx="50" cy="50" r="7.5" fill="${strokeColor}" />
+        `;
+        return svg;
+      }
+
+      createFixedWireSVG(endpoints, isEnergized) {
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 100 100');
+        svg.setAttribute('class', `wire-fixed-svg ${isEnergized ? 'energized-path' : ''}`);
+
+        const strokeColor = isEnergized ? '#00e5ff' : '#334155';
+        const [n, e, s, w] = endpoints;
+        let d = '';
+        if (n) d += ' M 50 50 L 50 0';
+        if (e) d += ' M 50 50 L 100 50';
+        if (s) d += ' M 50 50 L 50 100';
+        if (w) d += ' M 50 50 L 0 50';
+
+        svg.innerHTML = `
+          <path d="${d}" fill="none" stroke="#1e293b" stroke-width="14" stroke-linecap="square" />
+          <path d="${d}" fill="none" stroke="${strokeColor}" stroke-width="7" stroke-linecap="round" />
+          ${isEnergized ? `<path d="${d}" fill="none" class="wire-current-pulse" stroke="#ffffff" stroke-width="2.8" stroke-linecap="round" />` : ''}
+          <circle cx="50" cy="50" r="7.5" fill="${strokeColor}" />
+        `;
+        return svg;
+      }
+    }
+
+    // Initialize the game
+    window.addEventListener('DOMContentLoaded', () => {
+      new WirePuzzleApp();
+    });
+  </script>
+</body>
+</html>

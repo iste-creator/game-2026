@@ -1,0 +1,13 @@
+# OPERATION REBUILD // Project VELOCITY
+# Python Dependencies for Local Development Server
+
+# Note: The game itself is built entirely in vanilla HTML5, CSS3, and JavaScript
+# with zero required third-party libraries. Python's built-in standard library
+# is sufficient to run the game locally:
+#
+#   python -m http.server 3000
+#
+# Optional production / testing servers:
+werkzeug>=3.0.0
+gunicorn>=21.0.0; sys_platform != "win32"
+waitress>=2.1.2; sys_platform == "win32"

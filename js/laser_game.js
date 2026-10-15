@@ -14,7 +14,7 @@ class LaserLockdownGame {
     this.cols = 12;
     this.rows = 10;
     this.tileSize = 48; // 12 * 48 = 576px wide, 10 * 48 = 480px high
-    this.timeLimit = config.timeLimit || 50;
+    this.timeLimit = config.timeLimit || null; // No timer requirement
     this.timeLeft = this.timeLimit;
     this.timerInterval = null;
     this.animFrameId = null;
@@ -230,6 +230,12 @@ class LaserLockdownGame {
 
   startTimer() {
     if (this.timerInterval) clearInterval(this.timerInterval);
+    if (!this.timeLimit) {
+      if (this.timerElem && this.timerElem.parentElement) {
+        this.timerElem.parentElement.style.display = 'none';
+      }
+      return;
+    }
     this.timerInterval = setInterval(() => {
       if (this.isPaused || this.state === 'MISSION_COMPLETE' || this.state === 'MISSION_FAILED') return;
 
@@ -244,6 +250,12 @@ class LaserLockdownGame {
 
   updateTimerDisplay() {
     if (!this.timerElem) return;
+    if (!this.timeLimit) {
+      if (this.timerElem.parentElement) {
+        this.timerElem.parentElement.style.display = 'none';
+      }
+      return;
+    }
     const mins = Math.floor(this.timeLeft / 60);
     const secs = this.timeLeft % 60;
     this.timerElem.textContent = `TIME: 0${mins}:${secs < 10 ? '0' : ''}${secs}`;

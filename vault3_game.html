@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VAULT 03 // ENGINEERING QUIZ MATRIX // OPERATION REBUILD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ==========================================================================
+       INDUSTRIAL CYBERPUNK DESIGN SYSTEM & CSS RESET
+       ========================================================================== */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    :root {
+      --bg-dark: #030712;
+      --bg-panel: #060d17;
+      --bg-card: #09121f;
+      --bg-surface: #0f1c2d;
+      --border-panel: #1e293b;
+      --border-active: #10b981;
+      --accent-green: #10b981;
+      --accent-green-glow: rgba(16, 185, 129, 0.45);
+      --accent-cyan: #00e5ff;
+      --accent-cyan-glow: rgba(0, 229, 255, 0.4);
+      --alert-red: #ef4444;
+      --alert-red-glow: rgba(239, 68, 68, 0.6);
+      --bulb-gold: #ffea00;
+      --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+      --font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      background-image: 
+        radial-gradient(circle at 50% 12%, rgba(16, 185, 129, 0.08) 0%, transparent 60%),
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 32px 32px, 32px 32px;
+      color: #f1f5f9;
+      font-family: var(--font-display);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem 1rem;
+      overflow-x: hidden;
+    }
+
+    /* Terminal Scanlines Overlay */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.28) 50%);
+      background-size: 100% 4px;
+      z-index: 1000;
+      pointer-events: none;
+      opacity: 0.55;
+    }
+
+    /* Hazard Caution Stripe Top */
+    .hazard-stripe {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: repeating-linear-gradient(
+        -45deg,
+        #10b981,
+        #10b981 12px,
+        #060d17 12px,
+        #060d17 24px
+      );
+      z-index: 999;
+    }
+
+    /* Terminal Console Window */
+    .console-container {
+      width: 100%;
+      max-width: 740px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-panel);
+      border-radius: 14px;
+      box-shadow: 0 0 60px rgba(16, 185, 129, 0.14), 0 25px 50px -12px rgba(0, 0, 0, 0.85);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Topbar */
+    .console-topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.85rem 1.4rem;
+      background: #09121f;
+      border-bottom: 1px solid var(--border-panel);
+    }
+
+    .status-tag {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--accent-green);
+    }
+
+    .pulse-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--accent-green);
+      box-shadow: 0 0 8px var(--accent-green);
+      animation: led-blink 1.2s infinite ease-in-out;
+    }
+
+    @keyframes led-blink {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.25; transform: scale(0.8); }
+    }
+
+    .vault-id-chip {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #94a3b8;
+      letter-spacing: 0.08em;
+      background: #060e19;
+      padding: 0.25rem 0.65rem;
+      border-radius: 4px;
+      border: 1px solid #1e293b;
+    }
+
+    /* Console Content Area */
+    .console-body {
+      display: flex;
+      flex-direction: column;
+      gap: 1.15rem;
+      padding: 1.35rem 1.5rem 1.6rem;
+      position: relative;
+    }
+
+    /* Header Title Row */
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .header-title-block h1 {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 0.03em;
+      margin-top: 0.15rem;
+    }
+
+    .header-subtitle {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      color: var(--accent-green);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .session-badge {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--accent-cyan);
+      background: rgba(0, 229, 255, 0.08);
+      border: 1px solid rgba(0, 229, 255, 0.3);
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      letter-spacing: 0.06em;
+    }
+
+    /* Objective Banner */
+    .objective-banner {
+      padding: 0.75rem 1rem;
+      background: #081524;
+      border-left: 3px solid var(--accent-green);
+      border-radius: 0 8px 8px 0;
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      color: #cbd5e1;
+      line-height: 1.5;
+    }
+
+    .objective-banner strong {
+      color: #ffffff;
+    }
+
+    .objective-banner .penalty-warn {
+      color: #fca5a5;
+    }
+
+    /* ==========================================================================
+       5-NODE PIPELINE PROGRESS BAR (Node 1/5 to 5/5)
+       ========================================================================== */
+    .node-pipeline-wrapper {
+      background: #08121f;
+      border: 1px solid var(--border-panel);
+      border-radius: 10px;
+      padding: 0.9rem 1.25rem;
+      position: relative;
+    }
+
+    .node-pipeline-track {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+    }
+
+    .pipeline-line {
+      position: absolute;
+      top: 16px;
+      left: 20px;
+      right: 20px;
+      height: 2px;
+      background: #1e293b;
+      z-index: 1;
+    }
+
+    .node-step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      position: relative;
+      z-index: 2;
+      flex: 1;
+    }
+
+    .node-circle {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #0f1c2d;
+      border: 2px solid #334155;
+      color: #64748b;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .node-label {
+      font-family: var(--font-mono);
+      font-size: 0.68rem;
+      color: #64748b;
+      letter-spacing: 0.05em;
+      transition: color 0.3s;
+    }
+
+    /* Node States */
+    .node-step.active .node-circle {
+      background: rgba(16, 185, 129, 0.15);
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+      box-shadow: 0 0 16px var(--accent-green-glow);
+      transform: scale(1.15);
+    }
+
+    .node-step.active .node-label {
+      color: var(--accent-green);
+      font-weight: 700;
+    }
+
+    .node-step.completed .node-circle {
+      background: var(--accent-green);
+      border-color: var(--accent-green);
+      color: #030712;
+      font-weight: 900;
+    }
+
+    .node-step.completed .node-label {
+      color: var(--accent-green);
+    }
+
+    .node-step.breached .node-circle {
+      background: var(--alert-red);
+      border-color: var(--alert-red);
+      color: #ffffff;
+      box-shadow: 0 0 16px var(--alert-red-glow);
+    }
+
+    .node-step.breached .node-label {
+      color: var(--alert-red);
+    }
+
+    /* ==========================================================================
+       QUESTION TERMINAL CARD & OPTIONS GRID
+       ========================================================================== */
+    .question-card {
+      background: #081322;
+      border: 1px solid var(--border-panel);
+      border-radius: 12px;
+      padding: 1.35rem 1.45rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.7);
+      position: relative;
+      transition: border-color 0.3s;
+    }
+
+    .question-meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .node-tag-badge {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--accent-green);
+      letter-spacing: 0.08em;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      padding: 0.3rem 0.65rem;
+      border-radius: 4px;
+    }
+
+    .category-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: #94a3b8;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .tier-badge {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      padding: 0.28rem 0.65rem;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .tier-badge.tier-easy {
+      color: #38bdf8;
+      background: rgba(56, 189, 248, 0.12);
+      border: 1px solid rgba(56, 189, 248, 0.35);
+    }
+
+    .tier-badge.tier-medium {
+      color: #fbbf24;
+      background: rgba(251, 191, 36, 0.12);
+      border: 1px solid rgba(251, 191, 36, 0.35);
+    }
+
+    .tier-badge.tier-hard {
+      color: #f87171;
+      background: rgba(248, 113, 113, 0.15);
+      border: 1px solid rgba(248, 113, 113, 0.4);
+    }
+
+    .question-prompt {
+      font-size: 1.05rem;
+      font-weight: 600;
+      line-height: 1.55;
+      color: #f8fafc;
+      min-height: 3.2rem;
+    }
+
+    /* Options 2x2 Grid */
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+      margin-top: 0.25rem;
+    }
+
+    @media (min-width: 580px) {
+      .options-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .option-btn {
+      background: #0d1b2d;
+      border: 1px solid #1e293b;
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+      color: #e2e8f0;
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      transition: all 0.22s ease;
+      position: relative;
+      user-select: none;
+    }
+
+    .option-btn:hover:not(:disabled) {
+      background: #16273d;
+      border-color: var(--accent-green);
+      color: #ffffff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+    }
+
+    .option-btn:active:not(:disabled) {
+      transform: translateY(0);
+    }
+
+    .option-letter {
+      width: 28px;
+      height: 28px;
+      border-radius: 5px;
+      background: #060e19;
+      border: 1px solid #334155;
+      color: #94a3b8;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+    }
+
+    .option-btn:hover:not(:disabled) .option-letter {
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+    }
+
+    .option-text {
+      line-height: 1.35;
+      flex: 1;
+    }
+
+    /* Option States */
+    .option-btn.correct {
+      background: rgba(16, 185, 129, 0.22) !important;
+      border-color: var(--accent-green) !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 20px var(--accent-green-glow) !important;
+      animation: option-correct-pulse 0.4s ease-out;
+    }
+
+    .option-btn.correct .option-letter {
+      background: var(--accent-green) !important;
+      border-color: var(--accent-green) !important;
+      color: #030712 !important;
+    }
+
+    @keyframes option-correct-pulse {
+      0% { transform: scale(0.96); }
+      50% { transform: scale(1.04); }
+      100% { transform: scale(1); }
+    }
+
+    .option-btn.wrong {
+      background: rgba(239, 68, 68, 0.22) !important;
+      border-color: var(--alert-red) !important;
+      color: #ffffff !important;
+      box-shadow: 0 0 20px var(--alert-red-glow) !important;
+      animation: option-wrong-shake 0.4s ease-in-out;
+    }
+
+    .option-btn.wrong .option-letter {
+      background: var(--alert-red) !important;
+      border-color: var(--alert-red) !important;
+      color: #ffffff !important;
+    }
+
+    @keyframes option-wrong-shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .option-btn:disabled {
+      cursor: not-allowed;
+      opacity: 0.85;
+    }
+
+    /* ==========================================================================
+       WRONG ANSWER PENALTY: 18-SECOND LOCKOUT OVERLAY
+       ========================================================================== */
+    .lockout-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(15, 2, 4, 0.96);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 80;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      text-align: center;
+      animation: lockout-flash-in 0.3s ease-out;
+    }
+
+    @keyframes lockout-flash-in {
+      0% { opacity: 0; background: rgba(239, 68, 68, 0.4); }
+      100% { opacity: 1; background: rgba(15, 2, 4, 0.96); }
+    }
+
+    .lockout-card {
+      width: 100%;
+      max-width: 540px;
+      background: #150508;
+      border: 2px solid var(--alert-red);
+      border-radius: 14px;
+      padding: 2rem 1.6rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 0 60px rgba(239, 68, 68, 0.45);
+    }
+
+    .lockout-hazard-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      font-weight: 900;
+      letter-spacing: 0.1em;
+      color: var(--alert-red);
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      padding: 0.45rem 1rem;
+      border-radius: 6px;
+      margin-bottom: 1.15rem;
+      animation: hazard-flash 1s infinite alternate;
+    }
+
+    @keyframes hazard-flash {
+      0% { opacity: 0.7; }
+      100% { opacity: 1; filter: drop-shadow(0 0 10px var(--alert-red)); }
+    }
+
+    .lockout-main-message {
+      font-family: var(--font-mono);
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: #fee2e2;
+      letter-spacing: 0.05em;
+      line-height: 1.55;
+      margin-bottom: 1.4rem;
+    }
+
+    .lockout-timer-circle {
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 4px solid var(--alert-red);
+      background: rgba(239, 68, 68, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.4rem;
+      box-shadow: 0 0 35px var(--alert-red-glow), inset 0 0 15px rgba(239, 68, 68, 0.3);
+      animation: timer-pulse 1s infinite alternate;
+    }
+
+    @keyframes timer-pulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.06); filter: drop-shadow(0 0 12px var(--alert-red)); }
+    }
+
+    .lockout-seconds {
+      font-family: var(--font-mono);
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1;
+    }
+
+    .lockout-unit {
+      font-family: var(--font-mono);
+      font-size: 0.65rem;
+      letter-spacing: 0.12em;
+      color: #fca5a5;
+      margin-top: 2px;
+    }
+
+    .lockout-subline {
+      font-size: 0.85rem;
+      color: #94a3b8;
+      line-height: 1.45;
+    }
+
+    /* ==========================================================================
+       VICTORY CONDITION & CENTRAL LIGHT BULB ILLUMINATION OVERLAY
+       ========================================================================== */
+    .victory-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(3, 7, 18, 0.96);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 90;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .victory-card {
+      width: 100%;
+      max-width: 520px;
+      background: #08121f;
+      border: 1px solid var(--accent-green);
+      border-radius: 14px;
+      padding: 2.2rem 1.8rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      box-shadow: 0 0 60px var(--accent-green-glow);
+      animation: victory-pop 0.35s ease-out;
+    }
+
+    @keyframes victory-pop {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    /* Central Illuminating Light Bulb */
+    .bulb-fixture-wrapper {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+    }
+
+    .bulb-radiance-glow {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 234, 0, 0.5) 0%, rgba(255, 215, 0, 0.18) 60%, transparent 100%);
+      animation: radiance-burst 1.5s infinite alternate ease-in-out;
+      pointer-events: none;
+    }
+
+    @keyframes radiance-burst {
+      0% { transform: scale(0.85); opacity: 0.6; }
+      100% { transform: scale(1.4); opacity: 1; }
+    }
+
+    .bulb-svg {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      z-index: 2;
+      filter: drop-shadow(0 0 20px rgba(255, 234, 0, 0.8));
+    }
+
+    .access-granted-banner {
+      font-family: var(--font-mono);
+      font-size: 0.96rem;
+      font-weight: 800;
+      color: var(--accent-green);
+      letter-spacing: 0.05em;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 0.85rem 1.15rem;
+      border-radius: 8px;
+      width: 100%;
+      margin-bottom: 1.25rem;
+      line-height: 1.45;
+    }
+
+    .security-code-box {
+      background: #030712;
+      border: 1px dashed var(--accent-green);
+      border-radius: 8px;
+      padding: 0.9rem 1.8rem;
+      margin-bottom: 1.4rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+
+    .code-label {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: #94a3b8;
+      letter-spacing: 0.08em;
+      margin-bottom: 0.35rem;
+    }
+
+    .code-value {
+      font-family: var(--font-mono);
+      font-size: 1.95rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      color: var(--accent-green);
+      text-shadow: 0 0 16px var(--accent-green-glow);
+    }
+
+    .victory-flavor {
+      font-size: 0.86rem;
+      color: #cbd5e1;
+      margin-bottom: 1.4rem;
+      line-height: 1.45;
+    }
+
+    .action-btn-row {
+      display: flex;
+      gap: 0.85rem;
+      width: 100%;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-continue-home {
+      background: var(--accent-green);
+      color: #030712;
+      font-family: var(--font-mono);
+      font-size: 0.95rem;
+      font-weight: 900;
+      letter-spacing: 0.08em;
+      padding: 0.85rem 2rem;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 0 25px var(--accent-green-glow);
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+
+    .btn-continue-home:hover {
+      background: #34d399;
+      transform: translateY(-2px);
+      box-shadow: 0 0 35px rgba(16, 185, 129, 0.8);
+      color: #000;
+    }
+
+    .btn-restart {
+      background: #111e2f;
+      color: #94a3b8;
+      font-family: var(--font-mono);
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 0.85rem 1.6rem;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-restart:hover {
+      background: #1e293b;
+      color: #ffffff;
+      border-color: #64748b;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Caution Hazard Stripe -->
+  <div class="hazard-stripe"></div>
+
+  <!-- Main Console Window -->
+  <div class="console-container">
+    <!-- Topbar -->
+    <div class="console-topbar">
+      <div class="status-tag">
+        <span class="pulse-indicator"></span>
+        <span>SYS-03 // ENGINEERING QUIZ MATRIX</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:0.75rem;">
+        <a href="/" class="topbar-home-btn" style="font-family: var(--font-mono); font-size: 0.75rem; color: #94a3b8; text-decoration: none; background: #060e19; border: 1px solid #1e293b; padding: 0.3rem 0.75rem; border-radius: 4px; transition: all 0.2s; display:inline-flex; align-items:center; gap:0.4rem;">&larr; EXIT TO HOME</a>
+        <div class="vault-id-chip">VAULT 03 : ONLINE</div>
+      </div>
+    </div>
+
+    <!-- Body Area -->
+    <div class="console-body">
+      <!-- Header Row -->
+      <div class="header-row">
+        <div class="header-title-block">
+          <div class="header-subtitle">OPERATION REBUILD // VAULT 03</div>
+          <h1>ENGINEERING LOGIC CORE</h1>
+        </div>
+        <div class="session-badge">5-NODE EVALUATION</div>
+      </div>
+
+      <!-- Objective Banner -->
+      <div class="objective-banner">
+        Solve the <strong>5-Node Knowledge Matrix</strong> (2 Easy, 2 Medium, 1 Hard) to calibrate core systems.
+        <br><span class="penalty-warn">⚠️ Warning: Incorrect answers trigger an immediate <strong>18-second lockout</strong>.</span>
+      </div>
+
+      <!-- 5-Node Progress Pipeline -->
+      <div class="node-pipeline-wrapper">
+        <div class="pipeline-line"></div>
+        <div class="node-pipeline-track" id="nodePipeline">
+          <div class="node-step active" id="nodeStep_1">
+            <div class="node-circle">1</div>
+            <div class="node-label">NODE 1/5</div>
+          </div>
+          <div class="node-step" id="nodeStep_2">
+            <div class="node-circle">2</div>
+            <div class="node-label">NODE 2/5</div>
+          </div>
+          <div class="node-step" id="nodeStep_3">
+            <div class="node-circle">3</div>
+            <div class="node-label">NODE 3/5</div>
+          </div>
+          <div class="node-step" id="nodeStep_4">
+            <div class="node-circle">4</div>
+            <div class="node-label">NODE 4/5</div>
+          </div>
+          <div class="node-step" id="nodeStep_5">
+            <div class="node-circle">5</div>
+            <div class="node-label">NODE 5/5</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Question Terminal Card -->
+      <div class="question-card" id="questionCard">
+        <div class="question-meta-row">
+          <span class="node-tag-badge" id="nodeTagBadge">NODE 1/5</span>
+          <span class="category-label" id="categoryLabel">CATEGORY: ELECTRICAL</span>
+          <span class="tier-badge tier-easy" id="tierBadge">EASY</span>
+        </div>
+
+        <div class="question-prompt" id="questionPrompt">
+          Loading engineering question prompt...
+        </div>
+
+        <!-- Options Grid (A, B, C, D) -->
+        <div class="options-grid" id="optionsGrid">
+          <button class="option-btn" id="btnOpt0" data-index="0">
+            <span class="option-letter">A</span>
+            <span class="option-text" id="textOpt0">---</span>
+          </button>
+          <button class="option-btn" id="btnOpt1" data-index="1">
+            <span class="option-letter">B</span>
+            <span class="option-text" id="textOpt1">---</span>
+          </button>
+          <button class="option-btn" id="btnOpt2" data-index="2">
+            <span class="option-letter">C</span>
+            <span class="option-text" id="textOpt2">---</span>
+          </button>
+          <button class="option-btn" id="btnOpt3" data-index="3">
+            <span class="option-letter">D</span>
+            <span class="option-text" id="textOpt3">---</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 18-Second Security Breach Lockout Overlay -->
+    <div class="lockout-overlay" id="lockoutOverlay">
+      <div class="lockout-card">
+        <div class="lockout-hazard-badge">
+          <span>⚠️</span>
+          <span>SYSTEM LOCKOUT ACTIVE</span>
+        </div>
+        <div class="lockout-main-message" id="lockoutMsg">
+          SECURITY BREACH DETECTED: SYSTEM LOCKED OUT. RETRY IN 18 SECONDS...
+        </div>
+        <div class="lockout-timer-circle">
+          <span class="lockout-seconds" id="lockoutSeconds">18</span>
+          <span class="lockout-unit">SECONDS</span>
+        </div>
+        <div class="lockout-subline">
+          All input controls disabled. Pipeline will automatically advance upon timer completion.
+        </div>
+      </div>
+    </div>
+
+    <!-- Victory Condition & Central Light Bulb Vault Unlock Overlay -->
+    <div class="victory-overlay" id="victoryOverlay">
+      <div class="victory-card">
+        <!-- Central Illuminating Light Bulb -->
+        <div class="bulb-fixture-wrapper">
+          <div class="bulb-radiance-glow"></div>
+          <svg class="bulb-svg" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="42" r="32" fill="url(#bulbGlowGradient)" opacity="0.6"/>
+            <!-- Glass Globe -->
+            <path d="M50 12 C34 12 22 24 22 40 C22 51 28 58 35 64 L35 72 L65 72 L65 64 C72 58 78 51 78 40 C78 24 66 12 50 12 Z" fill="#ffe066" stroke="#fbbf24" stroke-width="2.5" />
+            <!-- Glowing Filament -->
+            <path d="M42 46 L46 32 L54 32 L58 46" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+            <line x1="42" y1="46" x2="38" y2="64" stroke="#d97706" stroke-width="2"/>
+            <line x1="58" y1="46" x2="62" y2="64" stroke="#d97706" stroke-width="2"/>
+            <!-- Base Cap Screw -->
+            <rect x="36" y="72" width="28" height="6" rx="2" fill="#94a3b8" stroke="#475569" stroke-width="1.5"/>
+            <rect x="38" y="78" width="24" height="6" rx="2" fill="#64748b" stroke="#334155" stroke-width="1.5"/>
+            <path d="M42 84 Q50 90 58 84" fill="#334155" stroke="#1e293b" stroke-width="1.5"/>
+            <defs>
+              <radialGradient id="bulbGlowGradient" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#fffbeb"/>
+                <stop offset="60%" stop-color="#fef08a"/>
+                <stop offset="100%" stop-color="#f59e0b" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+          </svg>
+        </div>
+
+        <!-- Access Granted Exact Message -->
+        <div class="access-granted-banner">
+          &gt;&gt; ACCESS GRANTED: You have correctly solved the Vault Riddle.
+        </div>
+
+        <!-- Generated Security Code -->
+        <div class="security-code-box">
+          <span class="code-label">VAULT 03 SECURITY PASSCODE</span>
+          <span class="code-value" id="securityCodeVal">KEY-ENGINEER-2026</span>
+        </div>
+
+        <div class="victory-flavor">
+          Vault riddle confirmed. Power and logic lines successfully synchronized.
+        </div>
+
+        <div class="action-btn-row">
+          <a href="/" class="btn-continue-home" id="btnContinueHome">
+            CONTINUE &rarr; PROCEED TO NEXT MISSION
+          </a>
+          <a href="/" class="btn-restart" id="btnFacilityHome" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;">
+            &larr; FACILITY HOME
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==========================================================================
+       JAVASCRIPT GAME ENGINE & 50-QUESTION POOL
+       ========================================================================== -->
+  <script>
+    // --- 50 STUDENT-FRIENDLY ENGINEERING & TECH QUESTIONS ---
+    const QUESTION_POOL = [
+      // --- EASY (20 Questions) ---
+      { id: 1, tier: 'easy', difficulty: 'easy', category: "Electronics", question: "Which basic electronic component is primarily used to restrict the flow of electrical current?", options: ["Capacitor","Resistor","Inductor","Diode"], answer: "Resistor", correct: 1 },
+      { id: 2, tier: 'easy', difficulty: 'easy', category: "Digital Logic", question: "Which fundamental logic gate produces an output of 1 ONLY when all its inputs are 1?", options: ["OR Gate","NOT Gate","AND Gate","XOR Gate"], answer: "AND Gate", correct: 2 },
+      { id: 3, tier: 'easy', difficulty: 'easy', category: "Electrical Machines", question: "What primary energy transformation occurs in a standard electrical motor?", options: ["Mechanical to Electrical","Electrical to Mechanical","Chemical to Thermal","Thermal to Electrical"], answer: "Electrical to Mechanical", correct: 1 },
+      { id: 4, tier: 'easy', difficulty: 'easy', category: "Electrical", question: "What is the standard unit of electrical resistance?", options: ["Volt","Ampere","Ohm","Watt"], answer: "Ohm", correct: 2 },
+      { id: 5, tier: 'easy', difficulty: 'easy', category: "Data Structures", question: "Which programming data structure operates on a First-In, First-Out (FIFO) basis?", options: ["Stack","Queue","Array","Tree"], answer: "Queue", correct: 1 },
+      { id: 6, tier: 'easy', difficulty: 'easy', category: "Electrical Circuits", question: "In a simple DC circuit, what happens to the total resistance when you add resistors in series?", options: ["Increases","Decreases","Stays the same","Drops to zero"], answer: "Increases", correct: 0 },
+      { id: 7, tier: 'easy', difficulty: 'easy', category: "Electronics", question: "What component allows electrical current to flow in only ONE direction?", options: ["Transistor","Diode","Transformer","Capacitor"], answer: "Diode", correct: 1 },
+      { id: 8, tier: 'easy', difficulty: 'easy', category: "Physics", question: "Which subatomic particle carries a negative electrical charge?", options: ["Proton","Neutron","Electron","Photon"], answer: "Electron", correct: 2 },
+      { id: 9, tier: 'easy', difficulty: 'easy', category: "Computer Architecture", question: "What does 'CPU' stand for in computer systems?", options: ["Central Processing Unit","Control Power Unit","Computer Program Utility","Central Performance User"], answer: "Central Processing Unit", correct: 0 },
+      { id: 10, tier: 'easy', difficulty: 'easy', category: "Mechanics", question: "Which physical law states that 'For every action, there is an equal and opposite reaction'?", options: ["Newton's First Law","Newton's Second Law","Newton's Third Law","Hooke's Law"], answer: "Newton's Third Law", correct: 2 },
+      { id: 11, tier: 'easy', difficulty: 'easy', category: "Digital Systems", question: "What base system is used in binary code?", options: ["Base-8","Base-10","Base-2","Base-16"], answer: "Base-2", correct: 2 },
+      { id: 12, tier: 'easy', difficulty: 'easy', category: "Materials", question: "Which material is a widely used conductor of electricity in house wiring?", options: ["Rubber","Glass","Copper","Plastic"], answer: "Copper", correct: 2 },
+      { id: 13, tier: 'easy', difficulty: 'easy', category: "AC Circuits", question: "What does a transformer alter in an alternating current (AC) circuit?", options: ["Frequency","Voltage level","Resistance","Power Factor"], answer: "Voltage level", correct: 1 },
+      { id: 14, tier: 'easy', difficulty: 'easy', category: "Civil & Structural", question: "Which geometric shape is structural engineering's most inherently rigid shape for trusses?", options: ["Square","Circle","Triangle","Pentagon"], answer: "Triangle", correct: 2 },
+      { id: 15, tier: 'easy', difficulty: 'easy', category: "Computer Systems", question: "In computer memory, how many bits make up 1 Byte?", options: ["4 bits","8 bits","16 bits","32 bits"], answer: "8 bits", correct: 1 },
+      { id: 16, tier: 'easy', difficulty: 'easy', category: "Instrumentation", question: "Which tool is commonly used to measure voltage, current, and resistance in electronics?", options: ["Oscilloscope","Multimeter","Galvanometer","Tachometer"], answer: "Multimeter", correct: 1 },
+      { id: 17, tier: 'easy', difficulty: 'easy', category: "Electrical", question: "What type of current is supplied by standard chemical batteries?", options: ["Direct Current (DC)","Alternating Current (AC)","Pulsating Current","Radio Frequency"], answer: "Direct Current (DC)", correct: 0 },
+      { id: 18, tier: 'easy', difficulty: 'easy', category: "Electronics", question: "What is the primary function of a capacitor in a circuit?", options: ["Generate power","Store electrical energy","Convert AC to DC","Amplify signals"], answer: "Store electrical energy", correct: 1 },
+      { id: 19, tier: 'easy', difficulty: 'easy', category: "Power Systems", question: "Which device converts mechanical energy into electrical energy?", options: ["Motor","Generator","Inverter","Transformer"], answer: "Generator", correct: 1 },
+      { id: 20, tier: 'easy', difficulty: 'easy', category: "Mechanical Systems", question: "In mechanical systems, what reduces friction between moving parts?", options: ["Lubricant","Abrasive","Insulator","Weight"], answer: "Lubricant", correct: 0 },
+
+      // --- MEDIUM (15 Questions) ---
+      { id: 21, tier: 'medium', difficulty: 'medium', category: "Electrical Circuits", question: "According to Ohm's Law (V = I * R), if resistance stays constant and voltage doubles, what happens to current?", options: ["It drops by half","It doubles","It quadruples","It stays the same"], answer: "It doubles", correct: 1 },
+      { id: 22, tier: 'medium', difficulty: 'medium', category: "Number Systems", question: "What is the hexadecimal representation of the decimal number 15?", options: ["A","E","F","10"], answer: "F", correct: 2 },
+      { id: 23, tier: 'medium', difficulty: 'medium', category: "Digital Logic", question: "Which logic gate outputs 0 ONLY when both inputs are identical?", options: ["AND Gate","OR Gate","XOR Gate","XNOR Gate"], answer: "XOR Gate", correct: 2 },
+      { id: 24, tier: 'medium', difficulty: 'medium', category: "Solid Mechanics", question: "What type of stress occurs when two opposing forces pull a structural beam apart?", options: ["Compression","Tension","Shear","Torsion"], answer: "Tension", correct: 1 },
+      { id: 25, tier: 'medium', difficulty: 'medium', category: "Data Structures", question: "Which data structure follows a Last-In, First-Out (LIFO) operational order?", options: ["Queue","Stack","Linked List","Binary Search Tree"], answer: "Stack", correct: 1 },
+      { id: 26, tier: 'medium', difficulty: 'medium', category: "Circuit Analysis", question: "If two 10 Ohm resistors are connected in PARALLEL, what is the total equivalent resistance?", options: ["20 Ohms","10 Ohms","5 Ohms","2.5 Ohms"], answer: "5 Ohms", correct: 2 },
+      { id: 27, tier: 'medium', difficulty: 'medium', category: "Semiconductors", question: "What is the primary semiconductor material used in modern integrated circuits?", options: ["Copper","Silicon","Germanium","Silver"], answer: "Silicon", correct: 1 },
+      { id: 28, tier: 'medium', difficulty: 'medium', category: "Algorithms", question: "What is the worst-case time complexity for binary search in a sorted array of N elements?", options: ["O(1)","O(N)","O(log N)","O(N^2)"], answer: "O(log N)", correct: 2 },
+      { id: 29, tier: 'medium', difficulty: 'medium', category: "Fluid Mechanics", question: "In fluid mechanics, what principle explains the lift generated by an airplane wing?", options: ["Pascal's Principle","Bernoulli's Principle","Archimedes' Principle","Hooke's Law"], answer: "Bernoulli's Principle", correct: 1 },
+      { id: 30, tier: 'medium', difficulty: 'medium', category: "Power Electronics", question: "What component is used to convert Alternating Current (AC) into Direct Current (DC)?", options: ["Inverter","Rectifier","Oscillator","Amplifier"], answer: "Rectifier", correct: 1 },
+      { id: 31, tier: 'medium', difficulty: 'medium', category: "Digital Electronics", question: "What does a 3-bit binary counter count up to (in decimal) before resetting to 0?", options: ["3","7","8","15"], answer: "7", correct: 1 },
+      { id: 32, tier: 'medium', difficulty: 'medium', category: "Materials Science", question: "What property of a material describes its resistance to being scratched or deformed?", options: ["Toughness","Hardness","Ductility","Elasticity"], answer: "Hardness", correct: 1 },
+      { id: 33, tier: 'medium', difficulty: 'medium', category: "Networking", question: "Which layer in the OSI network model is responsible for IP routing?", options: ["Data Link Layer","Network Layer","Transport Layer","Application Layer"], answer: "Network Layer", correct: 1 },
+      { id: 34, tier: 'medium', difficulty: 'medium', category: "Circuit Protection", question: "What is the main purpose of an LED's current-limiting series resistor?", options: ["To increase LED brightness","To prevent burning out the LED","To convert light into power","To reverse current flow"], answer: "To prevent burning out the LED", correct: 1 },
+      { id: 35, tier: 'medium', difficulty: 'medium', category: "Mechatronics", question: "What type of motor moves in discrete angle increments rather than continuous rotation?", options: ["Induction Motor","DC Brushed Motor","Stepper Motor","Universal Motor"], answer: "Stepper Motor", correct: 2 },
+
+      // --- HARD (15 Questions) ---
+      { id: 36, tier: 'hard', difficulty: 'hard', category: "Digital Logic", question: "In a 4-variable Karnaugh Map (K-Map), how many total cells are present?", options: ["8","12","16","32"], answer: "16", correct: 2 },
+      { id: 37, tier: 'hard', difficulty: 'hard', category: "Signal Processing", question: "What is the Nyquist sampling frequency required to reconstruct a signal with a maximum frequency of 5 kHz?", options: ["2.5 kHz","5 kHz","10 kHz","20 kHz"], answer: "10 kHz", correct: 2 },
+      { id: 38, tier: 'hard', difficulty: 'hard', category: "Boolean Algebra", question: "What logic expression represents De Morgan's Law for NOT (A AND B)?", options: ["NOT A AND NOT B","NOT A OR NOT B","A OR B","NOT (A OR B)"], answer: "NOT A OR NOT B", correct: 1 },
+      { id: 39, tier: 'hard', difficulty: 'hard', category: "Control Systems", question: "What type of feedback control loop uses Proportional, Integral, and Derivative actions?", options: ["LQR Controller","PID Controller","Bang-Bang Controller","Feedforward Loop"], answer: "PID Controller", correct: 1 },
+      { id: 40, tier: 'hard', difficulty: 'hard', category: "Analog Electronics", question: "What happens to the resonant frequency of an LC circuit if the inductance L is quadrupled?", options: ["Doubles","Halves","Quadruples","Stays the same"], answer: "Halves", correct: 1 },
+      { id: 41, tier: 'hard', difficulty: 'hard', category: "Database Architecture", question: "In relational databases, which normal form eliminates transitive functional dependencies?", options: ["1NF","2NF","3NF","BCNF"], answer: "3NF", correct: 2 },
+      { id: 42, tier: 'hard', difficulty: 'hard', category: "Thermodynamics", question: "In thermodynamics, which process occurs at a constant volume?", options: ["Isothermal","Isobaric","Isochoric","Adiabatic"], answer: "Isochoric", correct: 2 },
+      { id: 43, tier: 'hard', difficulty: 'hard', category: "Software Engineering", question: "In object-oriented programming, what concept allows a subclass to provide a specific implementation of a method already defined in its parent class?", options: ["Method Overloading","Method Overriding","Abstraction","Encapsulation"], answer: "Method Overriding", correct: 1 },
+      { id: 44, tier: 'hard', difficulty: 'hard', category: "Sequential Logic", question: "In digital electronics, how many flip-flops are required to construct a modulo-16 counter?", options: ["2","4","8","16"], answer: "4", correct: 1 },
+      { id: 45, tier: 'hard', difficulty: 'hard', category: "AI & Deep Learning", question: "What is the main advantage of using positional encoding like RoPE in modern Transformer models?", options: ["Reduces model memory footprint","Preserves relative positional information across tokens","Eliminates attention weights calculation","Speeds up training speed by 10x"], answer: "Preserves relative positional information across tokens", correct: 1 },
+      { id: 46, tier: 'hard', difficulty: 'hard', category: "Op-Amp Circuits", question: "Which operational amplifier configuration has a theoretical infinite input impedance and unity voltage gain?", options: ["Inverting Amplifier","Summing Amplifier","Voltage Follower","Differentiator"], answer: "Voltage Follower", correct: 2 },
+      { id: 47, tier: 'hard', difficulty: 'hard', category: "Operating Systems", question: "In operating systems, what condition occurs when processes are infinitely waiting for resources held by each other?", options: ["Thrashing","Deadlock","Paging","Fragmentation"], answer: "Deadlock", correct: 1 },
+      { id: 48, tier: 'hard', difficulty: 'hard', category: "Materials Engineering", question: "Which material property indicates the maximum stress a material can withstand before necking occurs?", options: ["Yield Strength","Ultimate Tensile Strength","Young's Modulus","Fatigue Limit"], answer: "Ultimate Tensile Strength", correct: 1 },
+      { id: 49, tier: 'hard', difficulty: 'hard', category: "Power Systems", question: "In AC circuits, what is the ratio of real power to apparent power called?", options: ["Quality Factor","Power Factor","Form Factor","Crest Factor"], answer: "Power Factor", correct: 1 },
+      { id: 50, tier: 'hard', difficulty: 'hard', category: "Circuit Analysis", question: "What is the time constant (tau) of an RC circuit with a 10k Ohm resistor and a 10uF capacitor?", options: ["0.01 seconds","0.1 seconds","1.0 second","10 seconds"], answer: "0.1 seconds", correct: 1 },
+    ];
+
+    // --- SYNTHESIZED AUDIO SOUND EFFECTS ---
+    class GameAudio {
+      constructor() {
+        this.ctx = null;
+      }
+      _getAudio() {
+        if (!this.ctx) {
+          const AudioContext = window.AudioContext || window.webkitAudioContext;
+          if (AudioContext) this.ctx = new AudioContext();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+        return this.ctx;
+      }
+      playCorrect() {
+        try {
+          const ctx = this._getAudio();
+          if (!ctx) return;
+          const now = ctx.currentTime;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.setValueAtTime(659.25, now + 0.08);
+          osc.frequency.setValueAtTime(783.99, now + 0.16);
+          osc.frequency.setValueAtTime(1046.50, now + 0.24);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.45);
+        } catch(e) {}
+      }
+      playWrong() {
+        try {
+          const ctx = this._getAudio();
+          if (!ctx) return;
+          const now = ctx.currentTime;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(160, now);
+          osc.frequency.linearRampToValueAtTime(110, now + 0.28);
+          gain.gain.setValueAtTime(0.2, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.35);
+        } catch(e) {}
+      }
+      playTick() {
+        try {
+          const ctx = this._getAudio();
+          if (!ctx) return;
+          const now = ctx.currentTime;
+          const osc = ctx.createOscillator();
+          const gain = ctx.createGain();
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(880, now);
+          gain.gain.setValueAtTime(0.05, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+          osc.connect(gain);
+          gain.connect(ctx.destination);
+          osc.start(now);
+          osc.stop(now + 0.05);
+        } catch(e) {}
+      }
+      playVictory() {
+        try {
+          const ctx = this._getAudio();
+          if (!ctx) return;
+          const now = ctx.currentTime;
+          [392, 523, 659, 783.99, 1046.5].forEach((freq, idx) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+            gain.gain.setValueAtTime(0.12, now + idx * 0.07);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.8 + idx * 0.07);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start(now + idx * 0.07);
+            osc.stop(now + 0.8 + idx * 0.07);
+          });
+        } catch(e) {}
+      }
+    }
+
+    // --- GAME CONTROLLER ---
+    class StandaloneQuizGame {
+      constructor() {
+        this.audio = new GameAudio();
+        this.sessionQuestions = [];
+        this.currentNodeIndex = 0;
+        this.totalNodes = 5;
+        this.isLockedOut = false;
+        this.lockoutSeconds = 18;
+        this.lockoutTimer = null;
+        this.nodeResults = [null, null, null, null, null];
+        this.hasAnswered = false;
+
+        // DOM Elements
+        this.nodeTagBadge = document.getElementById('nodeTagBadge');
+        this.categoryLabel = document.getElementById('categoryLabel');
+        this.tierBadge = document.getElementById('tierBadge');
+        this.questionPrompt = document.getElementById('questionPrompt');
+        this.optionBtns = [
+          document.getElementById('btnOpt0'),
+          document.getElementById('btnOpt1'),
+          document.getElementById('btnOpt2'),
+          document.getElementById('btnOpt3')
+        ];
+        this.optionTexts = [
+          document.getElementById('textOpt0'),
+          document.getElementById('textOpt1'),
+          document.getElementById('textOpt2'),
+          document.getElementById('textOpt3')
+        ];
+        this.lockoutOverlay = document.getElementById('lockoutOverlay');
+        this.lockoutMsg = document.getElementById('lockoutMsg');
+        this.lockoutSecondsEl = document.getElementById('lockoutSeconds');
+        this.victoryOverlay = document.getElementById('victoryOverlay');
+        this.btnRestart = document.getElementById('btnRestartGame');
+
+        this._bindEvents();
+        this.startSession();
+      }
+
+      _bindEvents() {
+        this.optionBtns.forEach(btn => {
+          btn.addEventListener('click', () => {
+            const idx = parseInt(btn.getAttribute('data-index'), 10);
+            this.handleAnswer(idx);
+          });
+        });
+
+        this.btnRestart.addEventListener('click', () => {
+          this.startSession();
+        });
+      }
+
+      startSession() {
+        this.currentNodeIndex = 0;
+        this.isLockedOut = false;
+        this.hasAnswered = false;
+        this.nodeResults = [null, null, null, null, null];
+        this._clearLockout();
+
+        // 1. Filter Pools
+        const easyPool = QUESTION_POOL.filter(q => q.tier === 'easy');
+        const medPool = QUESTION_POOL.filter(q => q.tier === 'medium');
+        const hardPool = QUESTION_POOL.filter(q => q.tier === 'hard');
+
+        // 2. Random selection function
+        const pickRandomN = (arr, n) => {
+          const copy = arr.slice();
+          const res = [];
+          for (let i = 0; i < n; i++) {
+            if (copy.length === 0) break;
+            const idx = Math.floor(Math.random() * copy.length);
+            res.push(copy.splice(idx, 1)[0]);
+          }
+          return res;
+        };
+
+        // 3. Exactly 2 Easy, 2 Medium, 1 Hard
+        const selectedEasy = pickRandomN(easyPool, 2);
+        const selectedMed = pickRandomN(medPool, 2);
+        const selectedHard = pickRandomN(hardPool, 1);
+
+        this.sessionQuestions = [
+          selectedEasy[0],
+          selectedEasy[1],
+          selectedMed[0],
+          selectedMed[1],
+          selectedHard[0]
+        ];
+
+        // Hide overlays
+        this.lockoutOverlay.style.display = 'none';
+        this.victoryOverlay.style.display = 'none';
+
+        this.renderCurrentQuestion();
+      }
+
+      renderCurrentQuestion() {
+        if (this.currentNodeIndex >= this.totalNodes) {
+          this.triggerVictory();
+          return;
+        }
+
+        this.hasAnswered = false;
+        const q = this.sessionQuestions[this.currentNodeIndex];
+        const nodeNum = this.currentNodeIndex + 1;
+
+        // Update pipeline nodes
+        for (let i = 1; i <= 5; i++) {
+          const nodeEl = document.getElementById(`nodeStep_${i}`);
+          if (!nodeEl) continue;
+          nodeEl.className = 'node-step';
+
+          if (i < nodeNum) {
+            if (this.nodeResults[i - 1] === false) {
+              nodeEl.classList.add('breached');
+            } else {
+              nodeEl.classList.add('completed');
+            }
+          } else if (i === nodeNum) {
+            nodeEl.classList.add('active');
+          }
+        }
+
+        // Header info
+        this.nodeTagBadge.textContent = `NODE ${nodeNum}/5`;
+        this.categoryLabel.textContent = `CATEGORY: ${(q.category || "ENGINEERING").toUpperCase()}`;
+        this.tierBadge.className = `tier-badge tier-${q.tier}`;
+        this.tierBadge.textContent = q.tier.toUpperCase();
+
+        // Prompt text
+        this.questionPrompt.textContent = q.question;
+
+        // Reset and populate options
+        this.optionBtns.forEach((btn, idx) => {
+          btn.disabled = false;
+          btn.className = 'option-btn';
+          this.optionTexts[idx].textContent = q.options[idx] || '';
+        });
+      }
+
+      handleAnswer(selectedIndex) {
+        if (this.isLockedOut || this.hasAnswered) return;
+        this.hasAnswered = true;
+
+        const q = this.sessionQuestions[this.currentNodeIndex];
+        const isCorrect = selectedIndex === q.correct;
+        const chosenBtn = this.optionBtns[selectedIndex];
+
+        if (isCorrect) {
+          // Success
+          this.nodeResults[this.currentNodeIndex] = true;
+          chosenBtn.classList.add('correct');
+          this.audio.playCorrect();
+
+          const curStep = document.getElementById(`nodeStep_${this.currentNodeIndex + 1}`);
+          if (curStep) curStep.classList.add('completed');
+
+          setTimeout(() => {
+            this.currentNodeIndex++;
+            this.renderCurrentQuestion();
+          }, 700);
+
+        } else {
+          // Failure: 18-Second Lockout
+          this.nodeResults[this.currentNodeIndex] = false;
+          chosenBtn.classList.add('wrong');
+          this.audio.playWrong();
+
+          // Immediately lock and disable all option buttons
+          this.optionBtns.forEach(btn => btn.disabled = true);
+
+          const curStep = document.getElementById(`nodeStep_${this.currentNodeIndex + 1}`);
+          if (curStep) curStep.classList.add('breached');
+
+          setTimeout(() => {
+            this.triggerLockout();
+          }, 350);
+        }
+      }
+
+      triggerLockout() {
+        this.isLockedOut = true;
+        this.lockoutSeconds = 18;
+
+        this.lockoutOverlay.style.display = 'flex';
+        this._updateLockoutText();
+
+        this._clearLockout();
+        this.lockoutTimer = setInterval(() => {
+          this.lockoutSeconds--;
+          this.audio.playTick();
+          this._updateLockoutText();
+
+          if (this.lockoutSeconds <= 0) {
+            this._clearLockout();
+            this.isLockedOut = false;
+            this.lockoutOverlay.style.display = 'none';
+
+            // Once 18s timer reaches zero, advance automatically to next question
+            this.currentNodeIndex++;
+            this.renderCurrentQuestion();
+          }
+        }, 1000);
+      }
+
+      _updateLockoutText() {
+        const secStr = String(this.lockoutSeconds).padStart(2, '0');
+        this.lockoutMsg.textContent = `SECURITY BREACH DETECTED: SYSTEM LOCKED OUT. RETRY IN ${secStr} SECONDS...`;
+        this.lockoutSecondsEl.textContent = secStr;
+      }
+
+      _clearLockout() {
+        if (this.lockoutTimer) {
+          clearInterval(this.lockoutTimer);
+          this.lockoutTimer = null;
+        }
+      }
+
+      triggerVictory() {
+        this._clearLockout();
+        this.audio.playVictory();
+        this.victoryOverlay.style.display = 'flex';
+
+        // Update pipeline
+        for (let i = 1; i <= 5; i++) {
+          const step = document.getElementById(`nodeStep_${i}`);
+          if (step && !step.classList.contains('breached')) {
+            step.classList.add('completed');
+          }
+        }
+      }
+    }
+
+    // Auto-boot game
+    window.addEventListener('DOMContentLoaded', () => {
+      window.quizGame = new StandaloneQuizGame();
+    });
+  </script>
+</body>
+</html>

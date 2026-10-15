@@ -51,8 +51,10 @@ class FluidPuzzle {
     // Diverter gate angle (for Team A / Team B interactive mechanic)
     this.diverterAngle = 0; // toggles on click
 
-    // 3 Collectible Micro-Cores
+    // 3 Collectible Micro-Cores & Checkpoint Storage
     this.cores = [];
+    this.coresCheckpointKey = `op_rebuild_v1_cores_${this.team}`;
+    this.lastLockWarnTime = 0;
 
     // Layout configuration by Team
     if (this.team === 'A') {
@@ -95,11 +97,47 @@ class FluidPuzzle {
       ];
     }
 
+    // Load any previously saved core checkpoints
+    const checkpoint = this.loadCoresCheckpoint();
+    this.cores.forEach((core, idx) => {
+      if (checkpoint[idx]) {
+        core.collected = true;
+      }
+    });
+
     this.initTerrain();
     this.initParticles();
     this.bindEvents();
     this.animate = this.animate.bind(this);
     requestAnimationFrame(this.animate);
+  }
+
+  loadCoresCheckpoint() {
+    try {
+      const saved = localStorage.getItem(this.coresCheckpointKey);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length === 3) {
+          return parsed;
+        }
+      }
+    } catch (e) {}
+    return [false, false, false];
+  }
+
+  saveCoresCheckpoint() {
+    try {
+      const data = this.cores.map(c => !!c.collected);
+      localStorage.setItem(this.coresCheckpointKey, JSON.stringify(data));
+    } catch (e) {}
+  }
+
+  allCoresCollected() {
+    return this.cores.length > 0 && this.cores.every(c => c.collected);
+  }
+
+  getCoresCollectedCount() {
+    return this.cores.filter(c => c.collected).length;
   }
 
   initTerrain() {
@@ -181,11 +219,17 @@ class FluidPuzzle {
     this.rpm = 0;
     this.gateOpen = false;
 
-    // Reset cores
+    // Checkpoint Retention: Preserve collected telemetry cores across redos!
+    const checkpoint = this.loadCoresCheckpoint();
     this.cores.forEach((core, idx) => {
-      core.collected = false;
+      if (checkpoint[idx]) {
+        core.collected = true;
+      }
       const badge = document.getElementById(`coreBadge${this.team}_${idx + 1}`);
-      if (badge) badge.classList.remove('collected');
+      if (badge) {
+        if (core.collected) badge.classList.add('collected');
+        else badge.classList.remove('collected');
+      }
     });
 
     const valveBtn = document.getElementById(`valveBtn${this.team}`);
@@ -457,21 +501,29 @@ class FluidPuzzle {
           const cdy = p.y - core.y;
           if (cdx * cdx + cdy * cdy <= (core.r + p.radius) * (core.r + p.radius)) {
             core.collected = true;
+            this.saveCoresCheckpoint(); // Store checkpoint immediately
+
             const badge = document.getElementById(`coreBadge${this.team}_${cIdx + 1}`);
             if (badge) badge.classList.add('collected');
 
+            const allDone = this.allCoresCollected();
+            const count = this.getCoresCollectedCount();
+
             // Floating popup
             this.floatingPopups.push({
-              text: `+1 CORE [0${cIdx + 1}] ⚡`,
+              text: allDone ? '⚡ ALL 3 CORES SECURED! MOTOR INTAKE UNLOCKED!' : `+1 CORE [0${cIdx + 1}] CHECKPOINT SAVED (${count}/3) 💾`,
               x: core.x,
-              y: core.y - 10,
+              y: core.y - 12,
               alpha: 1,
-              color: '#f59e0b',
+              color: allDone ? '#10b981' : '#f59e0b',
               vy: -1.2
             });
 
             if (window.soundEngine) {
               window.soundEngine.playChipCollect();
+              if (allDone) {
+                setTimeout(() => window.soundEngine.playDoorUnlock(), 300);
+              }
             }
           }
         }
@@ -522,6 +574,33 @@ class FluidPuzzle {
       // 6. Check Funnel Arrival (Into Motor Cooling Reservoir)
       if (p.x >= this.funnel.x && p.x <= this.funnel.x + this.funnel.w &&
           p.y >= this.funnel.y && p.y <= this.funnel.y + this.funnel.h) {
+
+        // REQUIREMENT: Must collect ALL 3 telemetry cores before entering motor!
+        if (!this.allCoresCollected()) {
+          // Motor intake is locked: bounce droplet away with deflection
+          p.vy = -Math.abs(p.vy) * 0.55 - 1.4;
+          p.vx += (Math.random() - 0.5) * 4.8;
+          p.y = this.funnel.y - p.radius - 2;
+
+          const now = performance.now();
+          if (!this.lastLockWarnTime || now - this.lastLockWarnTime > 850) {
+            this.lastLockWarnTime = now;
+            const count = this.getCoresCollectedCount();
+            this.floatingPopups.push({
+              text: `🔒 MOTOR LOCKED! COLLECT ALL 3 CORES FIRST (${count}/3)`,
+              x: this.funnel.x - 30,
+              y: this.funnel.y - 18,
+              alpha: 1,
+              color: '#ef4444',
+              vy: -1.1
+            });
+            if (window.soundEngine) {
+              window.soundEngine.playLaserHit();
+            }
+          }
+          continue;
+        }
+
         p.active = false;
         this.collectedDrops++;
 
@@ -750,8 +829,11 @@ class FluidPuzzle {
     this.ctx.textBaseline = 'alphabetic';
 
     // 6. Draw Motor Intake Funnel
+    const allUnlocked = this.allCoresCollected();
+    const intakeColor = allUnlocked ? '#10b981' : '#ef4444';
+
     this.ctx.fillStyle = '#0a1018';
-    this.ctx.strokeStyle = '#10b981';
+    this.ctx.strokeStyle = intakeColor;
     this.ctx.lineWidth = 3;
     this.ctx.beginPath();
     this.ctx.moveTo(this.funnel.x, this.funnel.y);
@@ -760,9 +842,31 @@ class FluidPuzzle {
     this.ctx.lineTo(this.funnel.x + this.funnel.w, this.funnel.y);
     this.ctx.stroke();
 
-    this.ctx.fillStyle = '#10b981';
-    this.ctx.font = 'bold 11px "Share Tech Mono", monospace';
-    this.ctx.fillText('⚡ MOTOR COOLING FUNNEL', this.funnel.x + 8, this.funnel.y + 36);
+    if (!allUnlocked) {
+      // Red locked intake hatch with caution crosshatch
+      this.ctx.save();
+      this.ctx.fillStyle = 'rgba(239, 68, 68, 0.22)';
+      this.ctx.fillRect(this.funnel.x, this.funnel.y, this.funnel.w, 45);
+
+      this.ctx.strokeStyle = 'rgba(239, 68, 68, 0.45)';
+      this.ctx.lineWidth = 1.5;
+      this.ctx.beginPath();
+      for (let lx = this.funnel.x; lx <= this.funnel.x + this.funnel.w; lx += 16) {
+        this.ctx.moveTo(lx, this.funnel.y);
+        this.ctx.lineTo(lx + 20, this.funnel.y + 45);
+      }
+      this.ctx.stroke();
+
+      const count = this.getCoresCollectedCount();
+      this.ctx.fillStyle = '#ef4444';
+      this.ctx.font = 'bold 10px "Share Tech Mono", monospace';
+      this.ctx.fillText(`🔒 INTAKE LOCKED [${count}/3 CORES]`, this.funnel.x + 6, this.funnel.y + 28);
+      this.ctx.restore();
+    } else {
+      this.ctx.fillStyle = '#10b981';
+      this.ctx.font = 'bold 11px "Share Tech Mono", monospace';
+      this.ctx.fillText('⚡ MOTOR INTAKE: ONLINE', this.funnel.x + 8, this.funnel.y + 36);
+    }
 
     // Dynamic Spinning Turbine inside Funnel
     const turbX = this.funnel.x + this.funnel.w / 2;
@@ -906,13 +1010,23 @@ class FluidPuzzle {
   reset() {
     this.gateOpen = false;
     this.initTerrain();
-    this.initParticles();
+    this.initParticles(); // Preserves checkpointed cores!
     const fillBar = document.getElementById(`tankFill${this.team}`);
     const pctText = document.getElementById(`tankPct${this.team}`);
     const rText = document.getElementById(`rpmText${this.team}`);
     if (fillBar) fillBar.style.width = '0%';
     if (pctText) pctText.textContent = '0%';
     if (rText) rText.textContent = '0 RPM';
+
+    const count = this.getCoresCollectedCount();
+    this.floatingPopups.push({
+      text: count === 3 ? '⚡ CHECKPOINT: 3/3 CORES READY FOR MOTOR' : `💾 CHECKPOINT: ${count}/3 CORES RETAINED`,
+      x: this.reservoir.x + 10,
+      y: this.reservoir.y + 75,
+      alpha: 1,
+      color: '#00e5ff',
+      vy: -1
+    });
   }
 }
 

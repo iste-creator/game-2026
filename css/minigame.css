@@ -460,6 +460,21 @@
   transform: translateY(-2px);
 }
 
+.btn-facility-home {
+  background: #111e2f !important;
+  border: 1px solid #334155 !important;
+  color: #94a3b8 !important;
+  box-shadow: none !important;
+  text-decoration: none !important;
+}
+
+.btn-facility-home:hover {
+  background: #1e293b !important;
+  color: #f1f5f9 !important;
+  border-color: #64748b !important;
+  transform: translateY(-2px);
+}
+
 /* Interactive Canvas Crosshair */
 .fluid-canvas-wrapper canvas {
   cursor: crosshair;

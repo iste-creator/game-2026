@@ -110,17 +110,7 @@
 }
 
 .laser-timer-box {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-weight: 700;
-  color: #f1f5f9;
-  letter-spacing: 0.08em;
-}
-
-.laser-timer-box.warning {
-  color: #ef4444;
-  animation: timerBlink 0.6s infinite;
+  display: none !important;
 }
 
 .laser-chip-pill {

@@ -26,9 +26,6 @@
       <button class="topbar-btn" id="audioToggleBtn" title="Toggle Sound FX">
         <span id="audioStatusIcon">🔊</span> SOUND
       </button>
-      <button class="topbar-btn" id="fsToggleBtn" title="Toggle Fullscreen">
-        <span id="fsIcon">⛶</span> FULLSCREEN
-      </button>
       <button class="topbar-btn" id="adminResetBtn" title="Executive Reset All Levels" onclick="openAdminResetModal()">
         <span>🔒</span> RESET GAME
       </button>
@@ -110,6 +107,8 @@
 
   </main>
 
+  </main>
+
   <script src="js/audio.js"></script>
   <script>
     // Audio toggler
@@ -123,41 +122,6 @@
       });
     }
 
-    // Fullscreen Toggler
-    const fsBtn = document.getElementById('fsToggleBtn');
-    const fsIcon = document.getElementById('fsIcon');
-
-    function toggleFullscreen() {
-      if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-        const root = document.documentElement;
-        if (root.requestFullscreen) {
-          root.requestFullscreen();
-        } else if (root.webkitRequestFullscreen) {
-          root.webkitRequestFullscreen();
-        }
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        } else if (document.webkitExitFullscreen) {
-          document.webkitExitFullscreen();
-        }
-      }
-      if (window.soundEngine) window.soundEngine.playClick();
-    }
-
-    function updateFsBtn() {
-      const isFs = !!(document.fullscreenElement || document.webkitFullscreenElement);
-      if (fsBtn) {
-        fsBtn.innerHTML = isFs ? '<span>🗗</span> EXIT FULLSCREEN' : '<span>⛶</span> FULLSCREEN';
-      }
-    }
-
-    if (fsBtn) {
-      fsBtn.addEventListener('click', toggleFullscreen);
-      document.addEventListener('fullscreenchange', updateFsBtn);
-      document.addEventListener('webkitfullscreenchange', updateFsBtn);
-    }
-
     // Vault Door Sound Effects
     const doorA = document.getElementById('vaultDoorA');
     const doorB = document.getElementById('vaultDoorB');
@@ -165,10 +129,10 @@
     [doorA, doorB].forEach(door => {
       if (!door) return;
       door.addEventListener('mouseenter', () => {
-        window.soundEngine.playHover();
+        if (window.soundEngine) window.soundEngine.playHover();
       });
       door.addEventListener('click', () => {
-        window.soundEngine.playEngineRev();
+        if (window.soundEngine) window.soundEngine.playEngineRev();
       });
     });
 

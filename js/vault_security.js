@@ -35,8 +35,8 @@ class VaultSecurityController {
     // Subsystem metadata
     this.vaultMeta = {
       1: { name: 'Vault 1', code: 'SYS-01 // POWER GRID', fromVault: null },
-      2: { name: 'Vault 2', code: 'SYS-02 // AERO', fromVault: 1 },
-      3: { name: 'Vault 3', code: 'SYS-03 // POWERTRAIN', fromVault: 2 },
+      2: { name: 'Vault 2', code: 'SYS-02 // WIRE GRID PUZZLE', fromVault: 1 },
+      3: { name: 'Vault 3', code: 'SYS-03 // ENGINEERING QUIZ', fromVault: 2 },
       4: { name: 'Vault 4', code: 'SYS-04 // TELEMETRY', fromVault: 3 }
     };
 
@@ -128,9 +128,11 @@ class VaultSecurityController {
         window.soundEngine.playVaultDecrypted();
       }
 
-      // Remove both team storage keys
+      // Remove both team storage keys and Vault 1 telemetry checkpoints
       localStorage.removeItem('op_rebuild_vault_states_A');
       localStorage.removeItem('op_rebuild_vault_states_B');
+      localStorage.removeItem('op_rebuild_v1_cores_A');
+      localStorage.removeItem('op_rebuild_v1_cores_B');
 
       // Reset active controller state
       this.states = {
@@ -507,11 +509,11 @@ class VaultSecurityController {
       } else if (this.states[2] === 'COMPLETED' && this.states[3] === 'LOCKED') {
         directiveElem.innerHTML = '<span>🔑</span> <span>OBJECTIVE: Open <strong>physical Vault 02</strong> with your key, retrieve the 6-digit passcode, and unlock <strong>Vault 3</strong>.</span>';
       } else if (this.states[3] === 'UNLOCKED' && this.states[3] !== 'COMPLETED') {
-        directiveElem.innerHTML = '<span>📐</span> <span>OBJECTIVE: Drag and assemble chassis blueprint components in <strong>Vault 3</strong> before the timer expires.</span>';
+        directiveElem.innerHTML = '<span>💡</span> <span>OBJECTIVE: Solve the 5-node cybernetic engineering quiz in <strong>Vault 3</strong> to calibrate core systems.</span>';
       } else if (this.states[3] === 'COMPLETED' && this.states[4] === 'LOCKED') {
         directiveElem.innerHTML = '<span>🔑</span> <span>OBJECTIVE: Open <strong>physical Vault 03</strong> with your key, retrieve the 6-digit passcode, and unlock <strong>Vault 4</strong>.</span>';
       } else if (this.states[4] === 'UNLOCKED' && this.states[4] !== 'COMPLETED') {
-        directiveElem.innerHTML = '<span>🚨</span> <span>OBJECTIVE: Evade security lasers and retrieve the access chip in <strong>Vault 4</strong> before lockdown.</span>';
+        directiveElem.innerHTML = '<span>🚨</span> <span>OBJECTIVE: Evade security lasers and retrieve the access chip in <strong>Vault 4</strong> to complete the mission.</span>';
       } else if (completedCount === 4) {
         directiveElem.innerHTML = '<span>🏆</span> <span>MISSION COMPLETE: All 4 vaults restored! Show this terminal to the event executive.</span>';
       }
