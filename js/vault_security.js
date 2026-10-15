@@ -146,7 +146,8 @@ class VaultSecurityController {
 
       setTimeout(() => {
         this.closeAdminResetModal();
-      }, 800);
+        location.reload();
+      }, 700);
 
     } else {
       // Incorrect password!

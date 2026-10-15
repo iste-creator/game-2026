@@ -173,13 +173,15 @@
         }
         if (window.soundEngine) window.soundEngine.playVaultDecrypted();
 
-        // Clear both teams from localStorage
+        // Clear both teams and telemetry checkpoint keys from localStorage
         localStorage.removeItem('op_rebuild_vault_states_A');
         localStorage.removeItem('op_rebuild_vault_states_B');
+        localStorage.removeItem('op_rebuild_v1_cores_A');
+        localStorage.removeItem('op_rebuild_v1_cores_B');
 
         setTimeout(() => {
           closeAdminResetModal();
-          alert('ALL VAULTS & LEVELS HAVE BEEN RESET TO DEFAULT LOCKS (Vault 1 Ready, Vaults 2-4 Locked with 6-digit codes).');
+          location.reload();
         }, 800);
 
       } else {
