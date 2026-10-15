@@ -272,32 +272,73 @@
       <div class="wire-content-area">
         <!-- Quest Title Strip -->
         <div class="wire-title-row">
-          <div style="display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center; width: 100%; margin-top: 1rem;">
-                <button class="btn-continue-exec" onclick="continueFromVault(4)">
-                  CONTINUE &rarr; PROCEED TO NEXT MISSION
-                </button>
-                <button class="btn-continue-exec btn-facility-home" onclick="continueFromVault(4)" style="background: #111e2f; color: #94a3b8; border: 1px solid #334155; box-shadow: none;">
-                  &larr; FACILITY HOME
-                </button>
-              </div>
+          <div>
+            <div class="wire-quest-heading">OPERATION REBUILD // VAULT 02</div>
+            <h2 class="wire-main-title">WIRE CIRCUIT ROUTING</h2>
+          </div>
+          <div class="nav-brief-badge" style="border-color: rgba(255, 85, 0, 0.4); color: var(--accent-teamB);">
+            <span>⚡</span> 5×5 GRID &bull; ROTATE TILES &bull; ENERGIZE LIGHT BULB
+          </div>
+        </div>
+
+        <!-- Objective Banner -->
+        <div class="wire-objective-strip">
+          <div>
+            <strong>OBJECTIVE:</strong> Click scrambled wire tiles to rotate 90° clockwise. Create a continuous electrical path from <strong>PWR IN (0,0)</strong> to the <strong>LIGHT BULB (4,4)</strong>.
+          </div>
+        </div>
+
+        <!-- Telemetry & Controls Toolbar -->
+        <div class="wire-hud-toolbar">
+          <div class="wire-telemetry-group">
+            <div class="wire-moves-counter">
+              MOVES: <span id="wireMoves_B" style="color: var(--accent-teamB); font-weight: 700;">0</span>
+            </div>
+            <div class="wire-status-pill" id="wireStatusBulb_B">
+              LIGHT BULB: UNLIT ○
             </div>
           </div>
+          <div class="wire-controls-group">
+            <button class="btn-wire-action" id="wireUndoBtn_B" title="Undo last rotation">
+              <span>↶</span> UNDO
+            </button>
+            <button class="btn-wire-action btn-wire-reset" id="wireResetBtn_B" title="Reset and re-scramble grid">
+              <span>↺</span> RESET GRID
+            </button>
+          </div>
+        </div>
 
-          <!-- Controls & Legend Strip -->
-          <div class="laser-footer-controls">
-            <div class="laser-legend-strip">
-              <span>🎮 W/A/S/D or Arrows to Move</span>
-              <span>💾 Chip</span>
-              <span>⚡ Lasers</span>
-              <span>🏁 Extraction</span>
+        <!-- 5x5 Grid Board Container -->
+        <div class="wire-board-container">
+          <div class="wire-grid-5x5" id="wireGrid_B">
+            <!-- Dynamically populated 25 tiles -->
+          </div>
+        </div>
+
+        <!-- Victory Overlay -->
+        <div class="wire-victory-overlay" id="wireVictory_B">
+          <div class="wire-victory-card">
+            <div class="wire-access-granted-text">
+              &gt;&gt; ACCESS GRANTED: You have correctly solved the Vault Riddle.
             </div>
-
-            <!-- Mini D-pad for touch / mouse navigation -->
-            <div class="laser-dpad-mini">
-              <button class="btn-dpad-mini" onclick="laserGameB && laserGameB.step('UP')" title="Move Up">▲</button>
-              <button class="btn-dpad-mini" onclick="laserGameB && laserGameB.step('LEFT')" title="Move Left">◀</button>
-              <button class="btn-dpad-mini" onclick="laserGameB && laserGameB.step('DOWN')" title="Move Down">▼</button>
-              <button class="btn-dpad-mini" onclick="laserGameB && laserGameB.step('RIGHT')" title="Move Right">▶</button>
+            <div class="wire-key-display-box">
+              <span class="wire-key-lbl">GENERATED KEY CODE</span>
+              <span class="wire-key-code" id="wireKeyCode_B">KEY-VOLT77</span>
+            </div>
+            <div class="wire-key-display-box" style="margin-top: -0.5rem; border-color: rgba(255, 85, 0, 0.4);">
+              <span class="wire-key-lbl">VAULT AUTHORIZATION CODE</span>
+              <span class="wire-key-code" id="wireAuthCode_B" style="font-size: 1.35rem; color: #ff5500;">VEL-582</span>
+            </div>
+            <div class="wire-event-instruction">
+              Show this screen to the event executive or record your key code to claim the physical access badge for Vault 02.
+            </div>
+            <div style="display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: center; width: 100%; margin-top: 1rem;">
+              <button class="btn-wire-continue" onclick="continueFromVault(2)">
+                CONTINUE &rarr; PROCEED TO NEXT MISSION
+              </button>
+              <button class="btn-wire-continue btn-facility-home" onclick="continueFromVault(2)" style="background: #111e2f; color: #94a3b8; border: 1px solid #334155; box-shadow: none;">
+                &larr; FACILITY HOME
+              </button>
             </div>
           </div>
         </div>
